@@ -1,9 +1,14 @@
 """Todos los contratos Pydantic del sistema en un solo lugar."""
 from decimal import Decimal
 from enum import Enum
-from typing import Annotated
+from typing import Annotated, TypedDict
 
 from pydantic import BaseModel, Field
+
+
+class DialogueTurn(TypedDict):
+    role: str    # "assistant" | "user"
+    content: str
 
 
 # ── Sesiones ──────────────────────────────────────────────────────────────────
@@ -129,8 +134,8 @@ class AICallRecord(BaseModel):
 # ── Entrevista — Request/Response ─────────────────────────────────────────────
 
 class StartSessionRequest(BaseModel):
-    job_id: str
-    candidate_id: str
+    job_id: str | None = None
+    candidate_id: str | None = None
 
 
 class QuestionInfo(BaseModel):
@@ -195,3 +200,31 @@ class SessionDetailResponse(BaseModel):
 class InterruptResponse(BaseModel):
     status: str
     session_id: str
+
+
+# ── Candidatos — CV upload / evaluación ──────────────────────────────────────
+
+class CVUploadResponse(BaseModel):
+    candidate_id: str
+    status: str       # "received"
+    passed_ko: bool
+
+
+class EvaluationTriggerResponse(BaseModel):
+    job_id: str
+    queued_candidates: int
+    status: str       # "evaluation_started"
+
+
+class CandidateTokenClaims(BaseModel):
+    candidate_id: str
+    job_id: str
+
+
+class CandidateListItem(BaseModel):
+    candidate_id: str
+    nombre: str
+    email: str | None
+    passed_ko: bool | None
+    resultado: str | None       # "APTO" | "DESCARTADO" | None si no evaluado
+    weighted_score: str | None

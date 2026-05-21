@@ -20,6 +20,7 @@ from models.evaluation import DimensionScoreRecord, Evaluation
 from models.job import JobOpening
 from models.ops import ChatSession, Message
 from services.ai_client import AIClient, ScoreRangeValidator
+from services.dialogue_manager import DialogueManager
 from services.scorer import Scorer
 from services.session_manager import SessionManager
 
@@ -95,42 +96,6 @@ INTERVIEW_QUESTIONS: list[dict] = [
 
 TOTAL_QUESTIONS = len(INTERVIEW_QUESTIONS)
 
-# Phrases that clearly signal intent to correct the previous answer
-_CORRECTION_PHRASES = (
-    "quiero corregir",
-    "quiero modificar mi respuesta",
-    "me equivoqué",
-    "cometí un error en la respuesta",
-    "quiero cambiar mi respuesta",
-    "volver a la pregunta anterior",
-    "rectificar mi respuesta",
-    "la respuesta anterior no era correcta",
-    "cambiar lo que dije antes",
-    "eso no era lo que quería decir",
-)
-
-# Phrases that clearly signal intent to abandon the interview
-_ABANDONMENT_PHRASES = (
-    "no quiero continuar",
-    "quiero abandonar",
-    "quiero terminar la entrevista",
-    "no me interesa continuar",
-    "cerrar la entrevista",
-    "cancelar la entrevista",
-    "me retiro de la entrevista",
-    "salir de la entrevista",
-)
-
-
-def _detect_correction(text: str) -> bool:
-    t = text.lower()
-    return any(phrase in t for phrase in _CORRECTION_PHRASES)
-
-
-def _detect_abandonment(text: str) -> bool:
-    t = text.lower()
-    return any(phrase in t for phrase in _ABANDONMENT_PHRASES)
-
 _WELCOME_TEMPLATE = """\
 Hola, bienvenido/a al proceso de entrevista para la posición de **Desarrollador Full-Stack** en **Clínica Salud Valencia S.L.** (Valencia, España).
 
@@ -161,10 +126,51 @@ def _question_text(index: int) -> str:
     )
 
 
+def _empty_v2_state(job_id: str = "", candidate_id: str = "") -> dict:
+    return {
+        "version": "2",
+        "session_type": "interview",
+        "job_id": job_id,
+        "candidate_id": candidate_id,
+        "current_dimension_index": 0,
+        "dimension_turns": {
+            "D1": [{"role": "assistant", "content": INTERVIEW_QUESTIONS[0]["question_text"]}]
+        },
+        "locked_answers": {},
+        "evaluation_id": None,
+    }
+
+
+def _migrate_v1_to_v2(v1: dict) -> dict:
+    """Promote v1 answers → locked_answers; map current_question_index → current_dimension_index."""
+    locked = {k: v for k, v in v1.get("answers", {}).items()}
+    index = v1.get("current_question_index", 0)
+    # Seed dimension_turns for current (in-progress) dimension if not yet locked
+    dim_turns: dict = {}
+    current_dim_id = INTERVIEW_QUESTIONS[index]["dimension_id"] if index < TOTAL_QUESTIONS else None
+    if current_dim_id and current_dim_id not in locked:
+        dim_turns[current_dim_id] = [
+            {"role": "assistant", "content": INTERVIEW_QUESTIONS[index]["question_text"]}
+        ]
+    return {
+        "version": "2",
+        "session_type": "interview",
+        "job_id": v1.get("job_id", ""),
+        "candidate_id": v1.get("candidate_id", ""),
+        "current_dimension_index": index,
+        "dimension_turns": dim_turns,
+        "locked_answers": locked,
+        "evaluation_id": v1.get("evaluation_id"),
+    }
+
+
 def _load_state(session: ChatSession) -> dict:
-    if session.context_summary:
-        return json.loads(session.context_summary)
-    return {"current_question_index": 0, "answers": {}, "evaluation_id": None}
+    if not session.context_summary:
+        return _empty_v2_state()
+    raw = json.loads(session.context_summary)
+    if raw.get("version") == "2":
+        return raw
+    return _migrate_v1_to_v2(raw)
 
 
 def _save_state(session: ChatSession, state: dict) -> None:
@@ -178,11 +184,13 @@ class InterviewConductor:
         ai_client: AIClient,
         scorer: Scorer,
         session_manager: SessionManager,
+        dialogue_manager: DialogueManager,
     ) -> None:
         self._db = db
         self._ai = ai_client
         self._scorer = scorer
         self._sm = session_manager
+        self._dm = dialogue_manager
 
     # ── Public interface ──────────────────────────────────────────────────────
 
@@ -197,15 +205,7 @@ class InterviewConductor:
             question_text=INTERVIEW_QUESTIONS[0]["question_text"],
         )
 
-        state = {
-            "version": "1",
-            "session_type": "interview",
-            "job_id": job_id,
-            "candidate_id": candidate_id,
-            "current_question_index": 0,
-            "answers": {},
-            "evaluation_id": None,
-        }
+        state = _empty_v2_state(job_id=job_id, candidate_id=candidate_id)
 
         chat_session = ChatSession(
             job_id=job_id,
@@ -229,7 +229,7 @@ class InterviewConductor:
         await self._sm.set_session_meta(
             chat_session.id,
             status="active",
-            current_question_index="0",
+            current_dimension_index="0",
         )
 
         return SessionStarted(
@@ -250,104 +250,146 @@ class InterviewConductor:
         request_id: str,
     ) -> tuple[QuestionInfo | None, InterviewEvaluationResult | None]:
         state = _load_state(session)
-        index = state["current_question_index"]
+        index = state["current_dimension_index"]
 
-        # Count existing messages to set correct sequence_number
+        # Count existing messages for sequence numbering
         result = await self._db.execute(
             select(func.count()).select_from(Message).where(Message.session_id == session.id)
         )
         msg_count = result.scalar_one()
 
-        # ── Special intents ────────────────────────────────────────────────
-        if _detect_abandonment(answer_text):
-            return await self._handle_abandonment(session, answer_text, msg_count)
-
-        if index > 0 and _detect_correction(answer_text):
-            return await self._handle_correction(session, state, answer_text, msg_count)
-
-        # ── Normal answer ─────────────────────────────────────────────────
-        dim_id = INTERVIEW_QUESTIONS[index]["dimension_id"]
-        state["answers"][dim_id] = answer_text
-
-        user_msg = Message(
-            session_id=session.id,
-            role="user",
-            content=answer_text,
-            sequence_number=msg_count + 1,
-        )
-        self._db.add(user_msg)
-        await self._db.flush()
-
-        next_index = index + 1
-        state["current_question_index"] = next_index
-
-        if next_index < TOTAL_QUESTIONS:
-            # Save next question as assistant message
-            q_text = _question_text(next_index)
-            asst_msg = Message(
-                session_id=session.id,
-                role="assistant",
-                content=q_text,
-                sequence_number=msg_count + 2,
-            )
-            self._db.add(asst_msg)
-            _save_state(session, state)
-            await self._db.commit()
-
-            await self._sm.set_session_meta(
-                session.id,
-                status="active",
-                current_question_index=str(next_index),
-            )
-
-            return _make_question_info(next_index), None
-
-        # All answers collected — run evaluation pipeline
-        _save_state(session, state)
-        await self._db.flush()
-
-        eval_result = await self._run_evaluation_pipeline(
-            session=session,
-            answers=state["answers"],
-            request_id=request_id,
-        )
-
-        state["evaluation_id"] = eval_result.evaluation_id
-        _save_state(session, state)
-        session.status = "completed"
-        await self._db.commit()
-
-        await self._sm.set_session_meta(
-            session.id,
-            status="completed",
-            current_question_index=str(next_index),
-        )
-
-        return None, eval_result
-
-    # ── Special intent handlers ───────────────────────────────────────────────
-
-    async def _handle_abandonment(
-        self,
-        session: ChatSession,
-        answer_text: str,
-        msg_count: int,
-    ) -> tuple[None, None]:
+        # Save user message immediately (before LLM call)
         self._db.add(Message(
             session_id=session.id,
             role="user",
             content=answer_text,
             sequence_number=msg_count + 1,
         ))
-        farewell = (
-            "Entendido, cerramos aquí la entrevista. "
-            "Si cambias de opinión o tienes cualquier pregunta, no dudes en contactarnos. "
-            "¡Mucha suerte en tu búsqueda!"
+        await self._db.flush()
+
+        # Load job rubrics for dialogue manager
+        job = await self._db.get(JobOpening, session.job_id)
+        if job is None:
+            raise ValueError(f"Job {session.job_id} not found")
+        discovery = DiscoveryJSON(**job.discovery_json)
+        dim_map = {d.id: d for d in discovery.dimensions}
+
+        q_entry = INTERVIEW_QUESTIONS[index]
+        dim_id = q_entry["dimension_id"]
+        dimension = dim_map[dim_id]
+
+        # Prior turns for this dimension (before this candidate message)
+        prior_turns = list(state["dimension_turns"].get(dim_id, []))
+
+        # LLM-driven dialogue turn
+        dialogue_result = await self._dm.process_turn(
+            dimension=dimension,
+            question_text=q_entry["question_text"],
+            turns=prior_turns,
+            candidate_message=answer_text,
+            session_id=session.id,
+            request_id=request_id,
         )
+
+        intent = dialogue_result["intent"]
+
+        # ── Abandonment ───────────────────────────────────────────────────────
+        if intent == "abandoning":
+            return await self._handle_abandonment(
+                session, dialogue_result["response"], msg_count
+            )
+
+        # ── Correction (restart current dimension) ────────────────────────────
+        if intent == "requesting_correction":
+            return await self._handle_correction(
+                session, state, dim_id, index, dialogue_result["response"], msg_count
+            )
+
+        # ── Normal flow (answering / asking_clarification) ────────────────────
+
+        # Update dimension turns
+        turns = state["dimension_turns"].setdefault(dim_id, [])
+        turns.append({"role": "user", "content": answer_text})
+
+        # Save LLM response
         self._db.add(Message(
             session_id=session.id,
             role="assistant",
-            content=farewell,
+            content=dialogue_result["response"],
+            sequence_number=msg_count + 2,
+        ))
+        turns.append({"role": "assistant", "content": dialogue_result["response"]})
+
+        if dialogue_result["is_complete"]:
+            state["locked_answers"][dim_id] = dialogue_result["answer_summary"] or answer_text
+            next_index = index + 1
+            state["current_dimension_index"] = next_index
+
+            if next_index < TOTAL_QUESTIONS:
+                next_q_text = _question_text(next_index)
+                next_dim_id = INTERVIEW_QUESTIONS[next_index]["dimension_id"]
+                self._db.add(Message(
+                    session_id=session.id,
+                    role="assistant",
+                    content=next_q_text,
+                    sequence_number=msg_count + 3,
+                ))
+                state["dimension_turns"][next_dim_id] = [
+                    {"role": "assistant", "content": INTERVIEW_QUESTIONS[next_index]["question_text"]}
+                ]
+                _save_state(session, state)
+                await self._db.commit()
+                await self._sm.set_session_meta(
+                    session.id,
+                    status="active",
+                    current_dimension_index=str(next_index),
+                )
+                return _make_question_info(next_index), None
+
+            # All 8 dimensions locked — run evaluation
+            _save_state(session, state)
+            await self._db.flush()
+
+            eval_result = await self._run_evaluation_pipeline(
+                session=session,
+                answers=state["locked_answers"],
+                request_id=request_id,
+            )
+
+            state["evaluation_id"] = eval_result.evaluation_id
+            _save_state(session, state)
+            session.status = "completed"
+            await self._db.commit()
+            await self._sm.set_session_meta(
+                session.id,
+                status="completed",
+                current_dimension_index=str(next_index),
+            )
+            return None, eval_result
+
+        # Not complete — follow-up in progress for same dimension
+        _save_state(session, state)
+        await self._db.commit()
+        await self._sm.set_session_meta(
+            session.id,
+            status="active",
+            current_dimension_index=str(index),
+        )
+        return _make_question_info(index), None
+
+    # ── Special intent handlers ───────────────────────────────────────────────
+
+    async def _handle_abandonment(
+        self,
+        session: ChatSession,
+        farewell_response: str,
+        msg_count: int,
+    ) -> tuple[None, None]:
+        # User message was already saved before the LLM call
+        self._db.add(Message(
+            session_id=session.id,
+            role="assistant",
+            content=farewell_response,
             sequence_number=msg_count + 2,
         ))
         session.status = "abandoned"
@@ -359,43 +401,31 @@ class InterviewConductor:
         self,
         session: ChatSession,
         state: dict,
-        answer_text: str,
+        dim_id: str,
+        index: int,
+        correction_response: str,
         msg_count: int,
     ) -> tuple[QuestionInfo, None]:
-        corrected_index = state["current_question_index"] - 1
-        corrected_q = INTERVIEW_QUESTIONS[corrected_index]
-
-        self._db.add(Message(
-            session_id=session.id,
-            role="user",
-            content=answer_text,
-            sequence_number=msg_count + 1,
-        ))
-        note = (
-            f"Claro, vamos a corregir tu respuesta anterior.\n\n"
-            f"**Pregunta {corrected_index + 1} de {TOTAL_QUESTIONS} "
-            f"— {corrected_q['dimension_name']}:**\n"
-            f"{corrected_q['question_text']}"
-        )
+        # User message was already saved before the LLM call
         self._db.add(Message(
             session_id=session.id,
             role="assistant",
-            content=note,
+            content=correction_response,
             sequence_number=msg_count + 2,
         ))
-
-        # Remove the stale answer and go back one question
-        state["answers"].pop(corrected_q["dimension_id"], None)
-        state["current_question_index"] = corrected_index
+        # Reset current dimension: clear turns, un-lock answer if it was locked
+        state["dimension_turns"][dim_id] = [
+            {"role": "assistant", "content": correction_response}
+        ]
+        state["locked_answers"].pop(dim_id, None)
         _save_state(session, state)
         await self._db.commit()
-
         await self._sm.set_session_meta(
             session.id,
             status="active",
-            current_question_index=str(corrected_index),
+            current_dimension_index=str(index),
         )
-        return _make_question_info(corrected_index), None
+        return _make_question_info(index), None
 
     # ── Evaluation pipeline ───────────────────────────────────────────────────
 
@@ -405,7 +435,6 @@ class InterviewConductor:
         answers: dict[str, str],
         request_id: str,
     ) -> InterviewEvaluationResult:
-        # Load job and discovery JSON
         job = await self._db.get(JobOpening, session.job_id)
         if job is None:
             raise ValueError(f"Job {session.job_id} not found")
@@ -424,7 +453,6 @@ class InterviewConductor:
         existing_eval = ko_result.scalar_one_or_none()
         ko_results_raw = existing_eval.ko_results if existing_eval else []
 
-        # Score each dimension via AI
         dimension_scores: list[DimensionScore] = []
         interview_scores: list[InterviewDimensionScore] = []
 
@@ -435,7 +463,6 @@ class InterviewConductor:
             rubrics = rubric_map.get(dim_id, {})
             peso = peso_map.get(dim_id, 1)
 
-            # Check interrupt between AI calls
             if await self._sm.check_and_clear_interrupted(session.id):
                 raise InterruptedError("Session interrupted by user")
 
@@ -477,7 +504,6 @@ class InterviewConductor:
 
         weighted_score, normalized_score = self._scorer.calculate(dimension_scores, discovery)
 
-        # Write new evaluation row
         eval_id = str(uuid.uuid4())
         new_eval = Evaluation(
             id=eval_id,

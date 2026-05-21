@@ -2,12 +2,14 @@
 import json
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.auth import require_interview_access
 from config import get_settings
 from contracts import (
+    CandidateTokenClaims,
     InterruptResponse,
     MessageOut,
     MessageResponse,
@@ -21,6 +23,7 @@ from models.candidate import Candidate
 from models.evaluation import Evaluation
 from models.ops import ChatSession, Message
 from services.ai_client import AIClient
+from services.dialogue_manager import DialogueManager
 from services.interview_conductor import InterviewConductor
 from services.scorer import Scorer
 from services.session_manager import SessionManager
@@ -33,7 +36,8 @@ def _get_conductor(db: AsyncSession = Depends(get_db)) -> InterviewConductor:
     ai_client = AIClient(db, settings.ANTHROPIC_API_KEY, settings.OPENAI_API_KEY)
     scorer = Scorer()
     session_manager = SessionManager(get_redis(), settings)
-    return InterviewConductor(db, ai_client, scorer, session_manager)
+    dialogue_manager = DialogueManager(ai_client)
+    return InterviewConductor(db, ai_client, scorer, session_manager, dialogue_manager)
 
 
 def _get_session_manager() -> SessionManager:
@@ -44,12 +48,22 @@ def _get_session_manager() -> SessionManager:
 
 @router.post("/sessions", status_code=201, response_model=SessionStarted)
 async def start_session(
-    body: StartSessionRequest,
+    claims: CandidateTokenClaims | None = Depends(require_interview_access),
+    body: StartSessionRequest | None = Body(default=None),
     conductor: InterviewConductor = Depends(_get_conductor),
     db: AsyncSession = Depends(get_db),
 ):
+    # Resolve candidate_id and job_id from Bearer token claims or request body
+    candidate_id = (claims.candidate_id if claims else None) or (body and body.candidate_id)
+    job_id = (claims.job_id if claims else None) or (body and body.job_id)
+    if not candidate_id or not job_id:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "missing_fields", "message": "job_id and candidate_id are required."},
+        )
+
     # Gate 1: candidate must have passed_ko=True
-    candidate = await db.get(Candidate, body.candidate_id)
+    candidate = await db.get(Candidate, candidate_id)
     if not candidate or not candidate.passed_ko:
         raise HTTPException(
             status_code=422,
@@ -59,8 +73,8 @@ async def start_session(
     # Gate 2: no active/processing session already exists for this candidate+job
     existing = await db.execute(
         select(ChatSession).where(
-            ChatSession.candidate_id == body.candidate_id,
-            ChatSession.job_id == body.job_id,
+            ChatSession.candidate_id == candidate_id,
+            ChatSession.job_id == job_id,
             ChatSession.session_type == "interview",
             ChatSession.status.notin_(["completed", "expired", "abandoned"]),
         )
@@ -72,12 +86,12 @@ async def start_session(
             detail={"error": "session_already_exists", "session_id": dupe.id},
         )
 
-    return await conductor.create_session(body.job_id, body.candidate_id)
+    return await conductor.create_session(job_id, candidate_id)
 
 
 # ── POST /sessions/{session_id}/message ──────────────────────────────────────
 
-@router.post("/sessions/{session_id}/message", response_model=MessageResponse)
+@router.post("/sessions/{session_id}/message", response_model=MessageResponse, dependencies=[Depends(require_interview_access)])
 async def send_message(
     session_id: str,
     body: SendMessageRequest,
@@ -123,7 +137,7 @@ async def send_message(
 
 # ── GET /sessions/{session_id} ────────────────────────────────────────────────
 
-@router.get("/sessions/{session_id}", response_model=SessionDetailResponse)
+@router.get("/sessions/{session_id}", response_model=SessionDetailResponse, dependencies=[Depends(require_interview_access)])
 async def get_session(
     session_id: str,
     db: AsyncSession = Depends(get_db),
@@ -133,7 +147,10 @@ async def get_session(
         raise HTTPException(status_code=404, detail={"error": "session_not_found"})
 
     state = json.loads(session.context_summary) if session.context_summary else {}
-    current_q_index = state.get("current_question_index", 0)
+    if state.get("version") == "2":
+        current_q_index = state.get("current_dimension_index", 0)
+    else:
+        current_q_index = state.get("current_question_index", 0)
 
     msgs_result = await db.execute(
         select(Message)
@@ -158,7 +175,7 @@ async def get_session(
 
 # ── POST /sessions/{session_id}/interrupt ─────────────────────────────────────
 
-@router.post("/sessions/{session_id}/interrupt", response_model=InterruptResponse)
+@router.post("/sessions/{session_id}/interrupt", response_model=InterruptResponse, dependencies=[Depends(require_interview_access)])
 async def interrupt_session(
     session_id: str,
     db: AsyncSession = Depends(get_db),

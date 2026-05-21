@@ -13,8 +13,10 @@ from contracts import DiscoveryJSON, DimensionScore
 from services.interview_conductor import (
     INTERVIEW_QUESTIONS,
     TOTAL_QUESTIONS,
+    _empty_v2_state,
     _load_state,
     _make_question_info,
+    _migrate_v1_to_v2,
     _question_text,
     _save_state,
 )
@@ -106,51 +108,92 @@ def test_question_text_includes_number_and_name():
     assert "D1" in text or "Integraciones" in text
 
 
-# ── 3. Estado de sesión (context_summary JSON) ────────────────────────────────
+# ── 3. Migración de estado v1 → v2 ───────────────────────────────────────────
 
-def test_initial_state_load_returns_defaults():
-    session = FakeChatSession()
-    state = _load_state(session)
-    assert state["current_question_index"] == 0
-    assert state["answers"] == {}
-    assert state["evaluation_id"] is None
-
-
-def test_save_and_load_state_roundtrip():
-    session = FakeChatSession()
-    original = {
-        "current_question_index": 4,
-        "answers": {"D1": "respuesta uno", "D2": "respuesta dos"},
+def test_v1_migrates_answers_to_locked_answers():
+    v1 = {
+        "version": "1",
+        "current_question_index": 3,
+        "answers": {"D1": "r1", "D2": "r2", "D3": "r3"},
         "evaluation_id": None,
     }
-    _save_state(session, original)
-    loaded = _load_state(session)
-    assert loaded == original
+    v2 = _migrate_v1_to_v2(v1)
+    assert v2["version"] == "2"
+    assert v2["locked_answers"] == {"D1": "r1", "D2": "r2", "D3": "r3"}
+    assert "answers" not in v2
 
 
-def test_state_persists_evaluation_id():
+def test_v1_migrates_index():
+    v1 = {"version": "1", "current_question_index": 5, "answers": {}, "evaluation_id": None}
+    v2 = _migrate_v1_to_v2(v1)
+    assert v2["current_dimension_index"] == 5
+    assert "current_question_index" not in v2
+
+
+def test_v2_state_passes_through_load():
     session = FakeChatSession()
-    state = {"current_question_index": 8, "answers": {}, "evaluation_id": "eval-abc-123"}
-    _save_state(session, state)
-    assert _load_state(session)["evaluation_id"] == "eval-abc-123"
+    v2_state = {
+        "version": "2",
+        "current_dimension_index": 3,
+        "dimension_turns": {"D1": [{"role": "user", "content": "respuesta"}]},
+        "locked_answers": {"D1": "resumen D1"},
+        "evaluation_id": None,
+    }
+    _save_state(session, v2_state)
+    loaded = _load_state(session)
+    assert loaded == v2_state
 
 
-def test_state_answers_accumulate():
+def test_empty_state_returns_v2_defaults():
     session = FakeChatSession()
     state = _load_state(session)
+    assert state["version"] == "2"
+    assert state["current_dimension_index"] == 0
+    assert state["locked_answers"] == {}
+    assert state["evaluation_id"] is None
+    # D1 should be pre-seeded with the initial question
+    assert "D1" in state["dimension_turns"]
+
+
+# ── 4. Estado v2 — locked_answers y dimension_turns ──────────────────────────
+
+def test_v2_locked_answers_accumulate():
+    session = FakeChatSession()
+    state = _empty_v2_state()
     for i, q in enumerate(INTERVIEW_QUESTIONS):
-        state["answers"][q["dimension_id"]] = f"respuesta {i + 1}"
-        state["current_question_index"] = i + 1
+        state["locked_answers"][q["dimension_id"]] = f"resumen {i + 1}"
+        state["current_dimension_index"] = i + 1
         _save_state(session, state)
 
     final = _load_state(session)
-    assert final["current_question_index"] == 8
-    assert len(final["answers"]) == 8
-    assert final["answers"]["D1"] == "respuesta 1"
-    assert final["answers"]["D8"] == "respuesta 8"
+    assert final["current_dimension_index"] == 8
+    assert len(final["locked_answers"]) == 8
+    assert final["locked_answers"]["D1"] == "resumen 1"
+    assert final["locked_answers"]["D8"] == "resumen 8"
 
 
-# ── 4. Scorer con scores simulados del dataset ────────────────────────────────
+def test_v2_dimension_turns_roundtrip():
+    session = FakeChatSession()
+    state = _empty_v2_state()
+    state["dimension_turns"]["D2"] = [
+        {"role": "assistant", "content": "Pregunta D2"},
+        {"role": "user", "content": "Respuesta candidato"},
+        {"role": "assistant", "content": "Seguimiento"},
+    ]
+    _save_state(session, state)
+    loaded = _load_state(session)
+    assert loaded["dimension_turns"]["D2"] == state["dimension_turns"]["D2"]
+
+
+def test_v2_state_persists_evaluation_id():
+    session = FakeChatSession()
+    state = _empty_v2_state()
+    state["evaluation_id"] = "eval-xyz-456"
+    _save_state(session, state)
+    assert _load_state(session)["evaluation_id"] == "eval-xyz-456"
+
+
+# ── 5. Scorer con scores simulados del dataset ────────────────────────────────
 
 @pytest.fixture
 def discovery_fixture():
@@ -219,7 +262,7 @@ def test_scenario_respuestas_debiles_score(discovery_fixture):
     assert weighted == expected
 
 
-# ── 5. Ranking y ganador ──────────────────────────────────────────────────────
+# ── 6. Ranking y ganador ──────────────────────────────────────────────────────
 
 def test_ganador_claro_is_first(discovery_fixture):
     scenarios = ["ganador_claro", "buen_candidato", "candidato_promedio", "respuestas_debiles"]
@@ -274,7 +317,7 @@ def test_score_gap_between_winner_and_weak(discovery_fixture):
     assert gap >= Decimal("2.50"), f"El gap debería ser >= 2.50, es {gap}"
 
 
-# ── 6. Cobertura de preguntas en el dataset ───────────────────────────────────
+# ── 7. Cobertura de preguntas en el dataset ───────────────────────────────────
 
 @pytest.mark.parametrize("scenario_name", [
     "ganador_claro", "buen_candidato", "candidato_promedio", "respuestas_debiles"

@@ -1,0 +1,510 @@
+{
+  "description": "Dataset de escenarios E2E para el sistema de entrevista híbrido. Cada escenario ejercita un comportamiento diferente del DialogueManager: respuesta directa, seguimiento, clarificación, corrección y abandono.",
+  "job_id": "job-clinica-salud-valencia-001",
+  "max_turns_per_dimension": 3,
+  "scenarios": [
+
+    {
+      "id": "hibrido_directo",
+      "nombre": "Flujo directo — respuestas claras en el primer turno",
+      "descripcion": "El candidato responde cada dimensión con suficiente detalle desde la primera respuesta. El LLM debería marcar is_complete=true en el turno 1 para cada dimensión. Valida que el flujo básico del sistema híbrido sigue funcionando igual que antes.",
+      "candidate_id": "cand-13-sofia-delgado",
+      "expected_result": {
+        "resultado": "APTO",
+        "min_weighted_score": "3.50",
+        "expected_total_messages_min": 18,
+        "note": "8 respuestas candidato + hasta 8 respuestas LLM por dimensión + 8 mensajes de transición = al menos 18 mensajes assistant en la sesión"
+      },
+      "dimensions": [
+        {
+          "dimension_id": "D1",
+          "turns": [
+            {
+              "content": "Integré WhatsApp Business API de Meta directamente en 2022 para una empresa de logística con 4.000 clientes activos. Usé la Cloud API v16 de Meta con webhooks para recibir mensajes entrantes. Implementé flujos de notificación automática de estado de pedidos y un bot de consultas frecuentes. La mayor dificultad fue obtener la aprobación de plantillas de mensajes por parte de Meta, que tardó 10 días hábiles, y gestionar los errores de entrega cuando los usuarios bloqueaban el número.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta muy específica — el LLM debería completar D1 en este turno"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D2",
+          "turns": [
+            {
+              "content": "En el proyecto de gestión de pacientes de una clínica privada implementé varias capas: cifrado AES-256 en reposo para historiales clínicos, TLS 1.3 en tránsito, y firmamos un contrato de encargado de tratamiento con el cliente conforme al Art. 28 RGPD. Registré todas las actividades de tratamiento en el RAT (Art. 30 RGPD) y coordiné con el DPO del cliente para validar las bases jurídicas. Para consentimientos usamos un sistema de doble opt-in con registro de timestamp y IP.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Menciona artículos específicos del RGPD y medidas técnicas concretas"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D3",
+          "turns": [
+            {
+              "content": "En 2023 lideré solo el diseño y desarrollo de una plataforma SaaS de reservas para un centro deportivo. Las decisiones clave que tomé en solitario fueron: usar PostgreSQL en lugar de MySQL porque necesitábamos transacciones complejas de disponibilidad de pistas; optar por FastAPI sobre Django porque el cliente quería una API ligera sin overhead de templates; y diseñar un sistema de colas con Redis para las confirmaciones de reserva en tiempo real. Presenté cada decisión al cliente con un documento de ADR de una página explicando el trade-off de coste/rendimiento/mantenimiento.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Describe decisiones concretas con justificación técnica"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D4",
+          "turns": [
+            {
+              "content": "Mi criterio es construir solo lo que da ventaja competitiva o que ningún proveedor resuelve bien. En un proyecto reciente de e-commerce necesitábamos un motor de recomendaciones: decidí construirlo (filtrado colaborativo simple con Python) porque los SaaS disponibles costaban 800€/mes y el cliente tenía solo 300 SKUs, era overkill. Pero para pagos elegí Stripe directamente sin dudar — construir un motor de pagos propio sería temerario y redundante. El criterio que aplico: si el coste de integrar el SaaS es menor que 3 meses de mantenimiento propio, uso el SaaS.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Da ejemplo concreto con criterio cuantificable"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D5",
+          "turns": [
+            {
+              "content": "Entregué un panel de administración + API REST para una inmobiliaria en 11 semanas (plazo acordado: 12). El sistema tenía módulo de gestión de propiedades, integración con portales inmobiliarios vía RSS y un panel de analítica básica. Lo logré priorizando con MoSCoW desde la semana 1: las integraciones con portales eran Must-Have, la analítica avanzada quedó como Should-Have para v2. Entregué el MVP funcional en semana 9 y dediqué las últimas 3 semanas a testing, documentación y onboarding del cliente.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Fecha concreta, técnica de priorización nombrada"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D6",
+          "turns": [
+            {
+              "content": "Con clientes no técnicos evito el vocabulario técnico y uso analogías. Un ejemplo: necesitaba explicar por qué una migración de base de datos iba a necesitar 2 horas de inactividad. Le dije al gerente: 'Es como mudarse de oficina — hay que cerrar unos minutos para mover los archivos físicos al nuevo lugar; no podemos estar en dos sitios a la vez'. Entendió enseguida y programamos la migración para las 2AM del domingo. También mando actualizaciones semanales de una página en Google Docs con semáforo (verde/amarillo/rojo) y tres bullet points: qué se hizo, qué viene, qué necesito del cliente.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Analogía concreta + formato de reporte descrito"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D7",
+          "turns": [
+            {
+              "content": "Trabajé 18 meses como freelance para una clínica de fisioterapia con 3 sedes en Barcelona. Desarrollé su sistema de gestión de citas integrado con Google Calendar y un portal de pacientes para solicitar citas online. Aprendí que en salud la privacidad no es negociable — todo lo que se muestra en pantalla en una sala de espera debe ser anonimizado porque otros pacientes pueden verlo. También entendí las restricciones de los horarios clínicos: no se puede simplemente 'rellenar huecos' de agenda como en otros negocios porque los profesionales necesitan tiempo de documentación entre consultas.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Experiencia real en salud con aprendizajes específicos del sector"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D8",
+          "turns": [
+            {
+              "content": "Para el presupuesto de 8.000–12.000€ y 3 meses elegiría: FastAPI + PostgreSQL para el backend (libre, performante, equipo lo conoce); React + Vite para el panel de recepción (ecosystem maduro, muchos componentes UI disponibles); WhatsApp Cloud API de Meta (free tier generoso, sin coste de intermediario); Google Calendar API (gratuita); Railway o Fly.io para hosting (unos 30€/mes, sin complejidad de AWS para MVP). Evitaría microservicios — con este presupuesto el overhead operativo los hace inviables. Un monolito bien estructurado en FastAPI con workers Celery para las notificaciones asíncronas es suficiente y mantenible.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Stack concreto con costes y justificación por restricciones de presupuesto"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "hibrido_seguimiento",
+      "nombre": "Seguimiento activo — respuestas vagas que necesitan profundización",
+      "descripcion": "El candidato da respuestas superficiales en D1, D3 y D5. El LLM debería pedir un follow-up en esas dimensiones (is_complete=false). En el segundo turno el candidato da una respuesta completa y el LLM cierra la dimensión. D2, D4, D6, D7, D8 son directas.",
+      "candidate_id": "cand-12-carlos-rivas",
+      "expected_result": {
+        "resultado": "APTO",
+        "min_weighted_score": "3.00",
+        "expected_followup_dimensions": ["D1", "D3", "D5"],
+        "note": "Al menos D1, D3 y D5 deberían generar un turno de seguimiento antes de completarse"
+      },
+      "dimensions": [
+        {
+          "dimension_id": "D1",
+          "turns": [
+            {
+              "content": "He trabajado con APIs de mensajería en varios proyectos web.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": false,
+              "nota": "Vaga — no menciona WhatsApp ni detalles técnicos. El LLM debería pedir más información."
+            },
+            {
+              "content": "Sí, específicamente trabajé con WhatsApp Business API de Meta en 2023 para un proyecto de e-commerce. Usé la Cloud API con webhooks para notificaciones de estado de pedido. El principal reto fue gestionar la verificación del número de teléfono empresarial con Meta, que requirió validación de identidad de la empresa.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta detallada tras el seguimiento — debería completar D1"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D2",
+          "turns": [
+            {
+              "content": "En todos mis proyectos con datos personales aplico las medidas de RGPD requeridas. En un proyecto médico implementé cifrado AES-256, firmé contratos de encargado de tratamiento y documenté las bases jurídicas de tratamiento. Trabajé con el equipo legal del cliente para validar la política de retención de datos de pacientes.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta directa y suficiente para D2"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D3",
+          "turns": [
+            {
+              "content": "Sí, suelo trabajar con bastante autonomía en mis proyectos.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": false,
+              "nota": "Muy vaga — no da ningún ejemplo concreto. El LLM debe pedir un proyecto específico."
+            },
+            {
+              "content": "En 2022 desarrollé solo un sistema de gestión de inventario para una cadena de tiendas de ropa con 5 sucursales. Las decisiones de arquitectura más importantes que tomé: elegir PostgreSQL con replicación en lugar de un sistema centralizado simple, porque necesitábamos sincronización offline cuando las tiendas perdían conexión; y decidir construir el módulo de reportes desde cero en lugar de usar Tableau, porque el cliente tenía un presupuesto limitado y necesitaba informes muy específicos de rotación de stock.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Ejemplo concreto con decisiones y justificaciones — debería completar D3"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D4",
+          "turns": [
+            {
+              "content": "Siempre evalúo el coste-beneficio antes de decidir si construyo o compro. Para autenticación siempre uso proveedores como Auth0 o Supabase Auth — es demasiado crítico para implementarlo desde cero. Pero para lógica de negocio específica del cliente suelo construir, porque los SaaS genéricos raramente encajan bien con reglas de negocio complejas.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta directa con ejemplos de ambos lados de la decisión"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D5",
+          "turns": [
+            {
+              "content": "He entregado proyectos en plazos cortos varias veces.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": false,
+              "nota": "No da ningún dato concreto. El LLM debe pedir el proyecto y el plazo real."
+            },
+            {
+              "content": "En 2023 entregué un marketplace B2B para una empresa de suministros industriales en 10 semanas, con plazo acordado de 12. El sistema incluía catálogo de productos, carrito de compras, integración con su ERP vía webhooks y panel de administración. Para lograrlo en ese tiempo prioricé el flujo de compra completo (Must-Have) y dejé el módulo de analítica y el exportador de informes para una segunda fase que entregamos 6 semanas después.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Datos concretos: semanas, funcionalidades priorizadas, entrega en plazo"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D6",
+          "turns": [
+            {
+              "content": "Adapto mi comunicación al nivel técnico de cada interlocutor. Con CEOs y gerentes uso dashboards simples y lenguaje de negocio; con equipos técnicos voy directo al diagrama de arquitectura. Un ejemplo: para explicar la diferencia entre SQL y NoSQL a un director no técnico le dije que era como elegir entre una hoja de cálculo perfectamente organizada (SQL) o una pila de post-its flexibles (NoSQL), dependiendo de si los datos siempre tienen la misma forma.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Analogía clara y formato de comunicación descrito"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D7",
+          "turns": [
+            {
+              "content": "Desarrollé durante 6 meses un módulo de gestión de turnos para una clínica dental con 4 dentistas. El proyecto incluía un sistema de reservas online para pacientes, gestión de agenda de profesionales y recordatorios automáticos por SMS. Aprendí que los pacientes odontológicos tienen tasas de ausencia muy altas (hasta un 30%) y que el sistema de recordatorios era tan importante como el propio sistema de reservas.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Experiencia real en sector salud con aprendizaje específico del sector"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D8",
+          "turns": [
+            {
+              "content": "Para este proyecto con 8.000–12.000€ de presupuesto elegiría un stack serverless-lite: Next.js para el panel de recepción y la web de reservas (un solo despliegue), FastAPI en Railway para la API (unos 25€/mes), PostgreSQL en Supabase (tier gratuito hasta 500MB, suficiente para una clínica), WhatsApp Cloud API directa sin intermediarios, y Google Calendar API. Evitaría Angular y Spring — demasiado overhead de configuración para el plazo. Este stack permite ir de cero a producción en una semana y escala bien si el cliente crece.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Stack justificado con costes reales y razonamiento de escala"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "hibrido_clarificacion",
+      "nombre": "Candidato curioso — hace preguntas antes de responder",
+      "descripcion": "El candidato hace preguntas sobre el enunciado de D1 y D4 antes de responder. El LLM debería responder la pregunta del candidato y re-formular la pregunta original (intent=asking_clarification, is_complete=false). En el turno siguiente el candidato responde normalmente.",
+      "candidate_id": "cand-11-elena-martinez",
+      "expected_result": {
+        "resultado": "APTO",
+        "min_weighted_score": "2.50",
+        "expected_clarification_dimensions": ["D1", "D4"],
+        "note": "D1 y D4 deberían generar un turno de clarificación antes de que el candidato responda"
+      },
+      "dimensions": [
+        {
+          "dimension_id": "D1",
+          "turns": [
+            {
+              "content": "Antes de responder, ¿me podrías aclarar a qué te refieres exactamente con WhatsApp Business API? ¿Hablas de la aplicación de WhatsApp Business que usan los autónomos, o de la API Cloud de Meta para desarrolladores?",
+              "intent_esperado": "asking_clarification",
+              "is_complete_esperado": false,
+              "nota": "Pregunta legítima — el LLM debe responder la diferencia y re-preguntar"
+            },
+            {
+              "content": "Ah, perfecto, entonces sí tengo experiencia con eso. Integré la WhatsApp Business API Cloud (la de Meta Developers) en 2022 para un sistema de recordatorios de citas de una clínica dental. Configuré webhooks para recibir respuestas de los pacientes y automaticé el flujo de confirmación/cancelación de citas. La verificación del número con Meta fue la parte más engorrosa — tardó 8 días hábiles.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta clara después de la clarificación"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D2",
+          "turns": [
+            {
+              "content": "He trabajado con RGPD en proyectos de salud. En una clínica implementé consentimientos explícitos de pacientes con doble opt-in, cifrado de datos en reposo con AES-256, y limité el acceso a historiales clínicos mediante RBAC. También documenté el Registro de Actividades de Tratamiento requerido por el Art. 30 del RGPD.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta directa y técnica para D2"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D3",
+          "turns": [
+            {
+              "content": "En 2021 lideré en solitario el rediseño completo del sistema de facturación de una gestoría. Tomé la decisión de migrar de una base de datos SQLite local a PostgreSQL en la nube, lo que implicó un riesgo técnico y un coste mensual nuevo para el cliente. Justifiqué la decisión mostrando los límites de concurrencia de SQLite cuando dos usuarios editaban facturas simultáneamente, y el cliente aceptó el coste de 15€/mes por la estabilidad ganada.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Decisión de arquitectura concreta con justificación económica"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D4",
+          "turns": [
+            {
+              "content": "Cuando dices 'construir vs usar solución de terceros', ¿te refieres a bibliotecas open-source (como elegir entre JWT propio o usar Auth0) o también incluye SaaS y servicios cloud?",
+              "intent_esperado": "asking_clarification",
+              "is_complete_esperado": false,
+              "nota": "Pregunta válida sobre el alcance de la decisión — el LLM debe aclarar y re-preguntar"
+            },
+            {
+              "content": "Entendido. Mi enfoque incluye todo: librerías, SaaS y servicios cloud. Por ejemplo, para un proyecto de notificaciones necesitaba enviar emails transaccionales. Evalué construir el servidor SMTP propio (configuración compleja, riesgo de spam blacklisting) vs usar SendGrid (5€/mes para el volumen del cliente). Elegí SendGrid sin dudar — el coste de mantenimiento propio habría superado el SaaS en menos de dos meses. Pero para la lógica de precios dinámicos del mismo cliente, construí el motor desde cero porque los SaaS disponibles cobraban por regla configurada y la estructura de precios era demasiado específica.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta concreta con ejemplos reales de ambas decisiones"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D5",
+          "turns": [
+            {
+              "content": "Entregué un sistema de gestión de reservas para un hotel rural en 9 semanas (plazo: 10 semanas). El sistema tenía calendario de disponibilidad, integración con Booking.com vía API, y panel de administración. Prioricé el motor de disponibilidad y la integración con Booking.com, y dejé el módulo de estadísticas para una segunda iteración que entregué 4 semanas después.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Proyecto concreto con datos reales de plazo y priorización"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D6",
+          "turns": [
+            {
+              "content": "Uso reportes visuales simples y lenguaje de negocio. Para un cliente sin perfil técnico que quería entender por qué tardaba tanto en cargar su web, le mostré una analogía: 'Tu web ahora mismo tiene que hacer 47 viajes al supermercado cada vez que alguien la visita; con la optimización haremos 8 viajes'. Entendió al instante. También uso Google Slides semanales con semáforos de estado: verde (en plazo), amarillo (pequeño riesgo), rojo (necesito ayuda del cliente).",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Analogía creativa y metodología de reporte clara"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D7",
+          "turns": [
+            {
+              "content": "Trabajé un año como desarrolladora para un centro de psicología con consultas presenciales y online. Construí su plataforma de gestión de citas y un portal privado para que los pacientes accedieran a sus sesiones de videollamada. Lo más importante que aprendí: en salud mental la privacidad es aún más crítica que en otras especialidades. Las URLs de las salas de videollamada no podían compartirse por email estándar sin cifrar, y tuvimos que implementar links de un solo uso con expiración.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Experiencia real con aprendizaje de seguridad específico del sector salud"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D8",
+          "turns": [
+            {
+              "content": "Con 8.000–12.000€ y 3 meses usaría: Vue.js + Vite para el panel de recepción y web de reservas (más ligero que React para este alcance), FastAPI en Python para la API (rápido de desarrollar), PostgreSQL en Supabase (plan gratuito cubre el volumen de una clínica mediana), WhatsApp Cloud API de Meta directa, Google Calendar API sin coste. Hosting en Fly.io (~20€/mes). El mayor riesgo de presupuesto es la verificación de WhatsApp con Meta — agendar ese proceso en la semana 1 del proyecto, porque puede retrasar 2 semanas si hay incidencias con la cuenta empresarial.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Stack concreto con identificación del riesgo principal del proyecto"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "hibrido_correccion",
+      "nombre": "Corrección en curso — el candidato corrige su respuesta de D2",
+      "descripcion": "El candidato responde D1 bien. En D2 da una respuesta inicial vaga, luego pide corregirla, y da una respuesta mejor. El sistema debería limpiar los turnos de D2 y re-preguntar cuando detecta el intent de corrección.",
+      "candidate_id": "cand-13-sofia-delgado",
+      "expected_result": {
+        "resultado": "APTO",
+        "min_weighted_score": "3.00",
+        "expected_correction_dimensions": ["D2"],
+        "note": "D2 debería tener una corrección: la respuesta inicial vaga es descartada y reemplazada por la respuesta corregida"
+      },
+      "dimensions": [
+        {
+          "dimension_id": "D1",
+          "turns": [
+            {
+              "content": "Integré WhatsApp Business API de Meta en un proyecto de recordatorios de citas para una clínica en 2023. Usé la Cloud API con webhooks para recibir confirmaciones de pacientes. Configuré plantillas de mensajes aprobadas por Meta para los recordatorios de 24h y 1h antes de la cita. El mayor reto fue el proceso de verificación del número: Meta tardó 12 días laborables y bloquea el envío de mensajes hasta que la cuenta está verificada.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta clara y técnica para D1"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D2",
+          "turns": [
+            {
+              "content": "He trabajado con protección de datos en varios proyectos. Aplico las medidas de RGPD que corresponden según el tipo de datos.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": false,
+              "nota": "Muy vaga — no menciona ninguna medida técnica concreta. El LLM debería pedir más detalles."
+            },
+            {
+              "content": "Quiero corregir lo que acabo de decir, fui demasiado genérico.",
+              "intent_esperado": "requesting_correction",
+              "is_complete_esperado": false,
+              "nota": "Solicitud de corrección — el sistema debe limpiar los turnos de D2 y re-preguntar"
+            },
+            {
+              "content": "Lo reformulo completo: en el proyecto de gestión de citas para una clínica privada, implementé cifrado AES-256 para los historiales almacenados en la base de datos, TLS 1.3 para todas las comunicaciones cliente-servidor, y RBAC granular para que solo el médico responsable pudiera ver el historial completo de su paciente. Firmamos un contrato de encargado de tratamiento con el cliente (Art. 28 RGPD), registré todas las actividades en el RAT (Art. 30 RGPD) y coordiné con su DPO la base jurídica de tratamiento — consentimiento explícito para el historial clínico y obligación legal para la facturación.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta técnica y completa que debería completar D2 con puntuación alta"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D3",
+          "turns": [
+            {
+              "content": "Lideré en solitario el desarrollo de una plataforma de teleasistencia para personas mayores con 3.000 usuarios. Las decisiones más críticas: elegí arquitectura de microservicios para los módulos de alertas de emergencia (necesitaban alta disponibilidad independiente) pero monolito para el resto (presupuesto no permitía orquestación compleja). Justifiqué esto al cliente con un análisis de coste: los microservicios solo en el módulo de alertas costaban un 20% más pero garantizaban 99.9% de uptime en la función crítica del sistema.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Decisión arquitectónica sofisticada con análisis económico"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D4",
+          "turns": [
+            {
+              "content": "Para notificaciones por email uso siempre SendGrid o Postmark — integrarlos tarda 2 horas y el coste es mínimo. Pero para lógica de precios o reglas de negocio del cliente, construyo casi siempre, porque los motores de reglas genéricos son caros y terminan siendo difíciles de mantener cuando las reglas cambian. Mi regla mental: si el dominio del problema es genérico (email, pagos, auth), uso servicio externo. Si el dominio es específico del cliente, construyo.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Criterio claro con ejemplos de ambas decisiones"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D5",
+          "turns": [
+            {
+              "content": "Entregué un sistema completo de gestión de reservas para una cadena de hostales con 8 propiedades en 11 semanas (plazo: 12 semanas). Incluía calendario de disponibilidad multi-propiedad, channel manager básico para sincronizar con Booking.com, y panel de administración. Prioricé el motor de disponibilidad y el canal de Booking.com como críticos para el negocio del cliente, y moví el módulo de reportes financieros a una segunda fase.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Proyecto concreto con técnica de priorización aplicada"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D6",
+          "turns": [
+            {
+              "content": "Tengo un formato estándar para clientes no técnicos: cada semana mando un email de una sola pantalla con tres secciones: 'Qué funciona ya' (bullet points simples), 'En qué estamos ahora' (una frase), y 'Qué necesito de ti esta semana' (máximo dos acciones). Evito capturas de código o diagramas técnicos en esos emails. Para decisiones técnicas importantes, uso la analogía que mejor conecta con el negocio del cliente — con un restaurante explico la base de datos como la 'hoja de pedidos', con una tienda como el 'inventario'.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Formato concreto y metodología de comunicación adaptada al cliente"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D7",
+          "turns": [
+            {
+              "content": "Trabajé dos años en una startup de telemedicina que conectaba pacientes con médicos de cabecera por videollamada. Además del desarrollo técnico, entendí la complejidad regulatoria del sector: las plataformas de telemedicina tienen que cumplir tanto el RGPD como la normativa específica de cada comunidad autónoma para actos médicos remotos. También aprendí que los médicos son usuarios muy exigentes en términos de fiabilidad — si la videollamada se cae en mitad de una consulta, la experiencia entera se percibe como un fracaso del sistema.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Experiencia profunda en telemedicina con regulación y UX de profesionales médicos"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D8",
+          "turns": [
+            {
+              "content": "Para el presupuesto de 8.000–12.000€ en 3 meses: React + TypeScript para el panel de recepción y la web de reservas (conocido, con ecosistema rico en componentes de calendario), FastAPI en Python para la API (rápido de desarrollar, lo conozco bien), PostgreSQL en Supabase (plan gratuito, includes auth y storage), WhatsApp Cloud API directa sin broker, Google Calendar API. Despliegue en Railway (~25€/mes total). El riesgo principal es el tiempo de verificación del número de WhatsApp con Meta — en mi experiencia tarda entre 1 y 3 semanas, así que arrancarlo en la semana 1 del proyecto es crítico para no quedar bloqueado en la entrega.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Stack conocido, costes reales e identificación del riesgo crítico del proyecto"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "hibrido_abandono",
+      "nombre": "Abandono — el candidato deja la entrevista en D3",
+      "descripcion": "El candidato responde D1 y D2 correctamente pero en D3 decide abandonar. El sistema debe cerrar la sesión con status=abandoned. Después del abandono, el mismo candidato puede iniciar una nueva sesión (comportamiento esperado según el sistema).",
+      "candidate_id": "cand-11-elena-martinez",
+      "expected_result": {
+        "resultado": "abandoned",
+        "session_status_final": "abandoned",
+        "last_completed_dimension": "D2",
+        "note": "La sesión debe cerrarse con status=abandoned. No se genera evaluación. El candidato puede reiniciar."
+      },
+      "dimensions": [
+        {
+          "dimension_id": "D1",
+          "turns": [
+            {
+              "content": "He integrado WhatsApp Business API de Meta en un proyecto de recordatorios automáticos para una clínica dental en 2023. Usé la Cloud API con webhooks. La verificación del número con Meta fue el mayor reto, tardó 10 días.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta directa — D1 se completa en el primer turno"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D2",
+          "turns": [
+            {
+              "content": "En proyectos de salud aplico cifrado AES-256 para datos de pacientes, TLS en tránsito, y firmo contratos de encargado de tratamiento (Art. 28 RGPD). He documentado el RAT en varios proyectos y coordinado con DPOs de los clientes.",
+              "intent_esperado": "answering",
+              "is_complete_esperado": true,
+              "nota": "Respuesta técnica suficiente — D2 se completa en el primer turno"
+            }
+          ]
+        },
+        {
+          "dimension_id": "D3",
+          "turns": [
+            {
+              "content": "Prefiero no continuar con la entrevista. Quiero abandonar.",
+              "intent_esperado": "abandoning",
+              "is_complete_esperado": false,
+              "nota": "Mensaje de abandono — el sistema debe cerrar la sesión con status=abandoned"
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

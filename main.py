@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.auth import require_admin, require_candidate
+from api.candidates import router as candidates_router
 from api.interviews import router as interviews_router
 from api.jobs import router as jobs_router
 from config import get_settings
@@ -61,7 +62,8 @@ def create_app() -> FastAPI:
         return response
 
     app.include_router(jobs_router, prefix="/api/v1/jobs", dependencies=[Depends(require_admin)])
-    app.include_router(interviews_router, prefix="/api/v1/interviews", dependencies=[Depends(require_candidate)])
+    app.include_router(candidates_router, prefix="/api/v1/candidates")
+    app.include_router(interviews_router, prefix="/api/v1/interviews")
 
     @app.get("/health")
     async def health() -> dict:
