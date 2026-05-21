@@ -1,0 +1,87 @@
+{
+  "scenario": "respuestas_debiles",
+  "description": "Candidato que pasa el filtro KO (tiene experiencia mínima con WhatsApp y RGPD) pero sus respuestas son muy débiles. Score muy bajo.",
+  "candidate_name": "Candidato Débil",
+  "candidate_id": "cand-11-elena-martinez",
+  "answers": [
+    {
+      "dimension_id": "D1",
+      "dimension_name": "Integraciones técnicas obligatorias",
+      "question": "Describe tu experiencia integrando WhatsApp Business API (Meta). ¿Qué casos de uso implementaste y qué dificultades encontraste?",
+      "answer": "Conozco WhatsApp Business API y he leído la documentación. He enviado algunos mensajes de prueba con la API en un sandbox pero nunca lo he puesto en producción. Con Google Calendar sé que tiene una API pero tampoco la he integrado en un proyecto real.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Solo conocimiento teórico y pruebas en sandbox. Sin experiencia en producción con ninguna de las integraciones requeridas.",
+      "simulated_ai_evidencia": "nunca lo he puesto en producción... tampoco la he integrado en un proyecto real"
+    },
+    {
+      "dimension_id": "D2",
+      "dimension_name": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "question": "¿Cómo has manejado la protección de datos sanitarios en proyectos anteriores? Menciona medidas técnicas concretas (cifrado, consentimiento, RAT) y si has trabajado con validación legal.",
+      "answer": "Sé que el RGPD existe y que hay que cumplirlo. He puesto banners de cookies en webs. Para este proyecto buscaría un plugin o librería que maneje eso automáticamente.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Conocimiento superficial del RGPD limitado a cookies. Sin comprensión de datos de categoría especial, cifrado técnico ni el RAT. Propone delegar la responsabilidad a un plugin.",
+      "simulated_ai_evidencia": "buscaría un plugin o librería que maneje eso automáticamente"
+    },
+    {
+      "dimension_id": "D3",
+      "dimension_name": "Autonomía y toma de decisiones técnicas",
+      "question": "Describe un proyecto donde tomaste decisiones de arquitectura en solitario. ¿Cuáles fueron las más importantes y cómo las justificaste ante el cliente?",
+      "answer": "Siempre he trabajado en equipo así que las decisiones se tomaban entre todos. El cliente normalmente decide qué tecnología usar y yo implemento. Prefiero tener una segunda opinión antes de comprometer algo importante.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Sin autonomía técnica demostrada. El candidato describe depender del cliente o del equipo para las decisiones de arquitectura.",
+      "simulated_ai_evidencia": "El cliente normalmente decide qué tecnología usar y yo implemento"
+    },
+    {
+      "dimension_id": "D4",
+      "dimension_name": "Pragmatismo — criterio construir vs usar",
+      "question": "¿Cómo decides qué construir desde cero vs usar una solución de terceros? Dame un ejemplo concreto en un proyecto reciente.",
+      "answer": "Depende de lo que el cliente quiera. Si quiere algo personalizado construyo, si no uso lo que ya existe. No tengo una regla fija, cada caso es diferente.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Sin criterio técnico ni económico para la decisión. La respuesta delega en la preferencia del cliente sin aportar criterio propio.",
+      "simulated_ai_evidencia": "Depende de lo que el cliente quiera... No tengo una regla fija"
+    },
+    {
+      "dimension_id": "D5",
+      "dimension_name": "Entrega en plazos ajustados",
+      "question": "¿Has entregado un sistema funcional en producción en 3 meses o menos? Describe el proyecto, el plazo real y qué priorizaste para lograrlo.",
+      "answer": "Los proyectos en los que he trabajado generalmente duran más de 3 meses porque hay muchas cosas que ajustar. Los clientes van cambiando lo que quieren y eso retrasa. 3 meses me parece un plazo muy ajustado para este proyecto.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Sin historial de entregas en el plazo requerido. Atribuye los retrasos al cliente sin demostrar capacidad de gestión del alcance.",
+      "simulated_ai_evidencia": "Los proyectos en los que he trabajado generalmente duran más de 3 meses... 3 meses me parece un plazo muy ajustado"
+    },
+    {
+      "dimension_id": "D6",
+      "dimension_name": "Comunicación con no técnicos",
+      "question": "¿Cómo comunicas el avance técnico a clientes o directivos sin perfil tecnológico? Describe un ejemplo concreto.",
+      "answer": "Les explico lo que hice. Si no entienden algo lo repito con otras palabras. La comunicación con no técnicos es complicada porque a veces no saben lo que quieren.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Sin metodología ni estructura. Respuesta reactiva y sin ejemplos concretos. Culpa implícitamente al cliente de los problemas de comunicación.",
+      "simulated_ai_evidencia": "La comunicación con no técnicos es complicada porque a veces no saben lo que quieren"
+    },
+    {
+      "dimension_id": "D7",
+      "dimension_name": "Experiencia en sector salud",
+      "question": "¿Tienes experiencia trabajando en proyectos del sector salud, clínicas o gestión de citas? Describe el proyecto y qué aprendiste del contexto.",
+      "answer": "No, ninguna experiencia en salud.",
+      "simulated_ai_score": 1,
+      "simulated_ai_justificacion": "Sin ninguna experiencia ni comprensión del sector sanitario.",
+      "simulated_ai_evidencia": ""
+    },
+    {
+      "dimension_id": "D8",
+      "dimension_name": "Stack e infraestructura adecuada al presupuesto",
+      "question": "¿Qué stack tecnológico usarías para este proyecto con un presupuesto de 8.000–12.000€ y plazo de 3 meses? Justifica brevemente cada elección.",
+      "answer": "Usaría React, Node.js, MongoDB, Docker, Kubernetes y un servidor dedicado. Con microservicios sería más escalable para el futuro. El presupuesto puede ser un poco justo pero con el stack correcto se puede hacer.",
+      "simulated_ai_score": 2,
+      "simulated_ai_justificacion": "Stack sobredimensionado para el presupuesto y plazo. Kubernetes y microservicios son impracticables con €10.000 y 3 meses. Sin estimación de costes operativos.",
+      "simulated_ai_evidencia": "React, Node.js, MongoDB, Docker, Kubernetes... El presupuesto puede ser un poco justo"
+    }
+  ],
+  "expected_result": {
+    "weighted_score": "1.89",
+    "normalized_score": "0.3789",
+    "resultado": "APTO",
+    "ranking_position": 4,
+    "note": "Pasa el KO (tiene experiencia mínima con WhatsApp y RGPD) pero score muy bajo. En la práctica no sería seleccionado."
+  }
+}

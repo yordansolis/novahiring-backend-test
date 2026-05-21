@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "12",
+    "nombre": "Carlos Andrés Rivas Mendoza",
+    "ubicacion": "Madrid, España (disponible remoto/híbrido)",
+    "email": "carlos.rivas.fullstack@gmail.com",
+    "años_experiencia": 7
+  },
+
+  "knockout_check": {
+    "superado": true,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "PASA",
+        "evidencia": "CitaFácil: implementó WhatsApp Business API (Meta) con plantillas de mensaje aprobadas por Meta. Tasa de recordatorio efectivo del 87%. Experiencia directa con el proceso de aprobación de Meta."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "PASA",
+        "evidencia": "Aplicó RGPD y LOPDGDD para datos de salud en CitaFácil: consentimiento explícito, cifrado en base de datos, política de retención, derecho al olvido. RAT validado por despacho de abogados especializado en LOPDGDD."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "PASA",
+        "evidencia": "Fundó y desarrolló CitaFácil completamente solo: diseñó la arquitectura, construyó el sistema y lo llevó a producción con 12 clínicas activas. Onboarding presencial con clientes sin equipo de soporte."
+      }
+    ]
+  },
+
+  "scores": [
+    {
+      "dimension_id": "D1",
+      "dimension": "Integraciones técnicas obligatorias",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "CitaFácil implementa exactamente las 4 integraciones requeridas: WhatsApp Business API (Meta) con plantillas aprobadas y 87% tasa efectiva, Google Calendar OAuth 2.0 con actualización automática de disponibilidad, panel de gestión para recepcionistas con calendario semanal y búsqueda de pacientes, y módulo de reserva online para pacientes.",
+      "evidencia": "CitaFácil: WhatsApp API (Meta, plantillas aprobadas), Google Calendar OAuth 2.0, panel recepcionista, reserva online. 12 clínicas en producción."
+    },
+    {
+      "dimension_id": "D2",
+      "dimension": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "peso": 3,
+      "score": 4,
+      "justificacion": "Implementación sólida: consentimiento explícito, cifrado en base de datos, política de retención, derecho al olvido, RAT validado por abogados especialistas. Muy competente. La diferencia con score 5 es que Elena tiene certificación formal DPO y documentó también el análisis de impacto (AIPD), mientras que Carlos no menciona AIPD.",
+      "evidencia": "Consentimiento, cifrado, retención, derecho al olvido. RAT validado por despacho LOPDGDD. Sin mención de AIPD."
+    },
+    {
+      "dimension_id": "D3",
+      "dimension": "Autonomía y toma de decisiones técnicas",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "Fundó CitaFácil y tomó todas las decisiones de arquitectura de forma totalmente independiente. Diseñó la BD, la API, el panel de administración y el portal de reservas. Realizó onboarding presencial con 8 primeros clientes sin equipo de soporte. Modelo de trabajo que replica exactamente lo que la clínica necesita.",
+      "evidencia": "Fundador y único desarrollador de CitaFácil. 12 clínicas activas. Onboarding presencial con clientes. 7 años de carrera con autonomía creciente."
+    },
+    {
+      "dimension_id": "D4",
+      "dimension": "Pragmatismo — criterio construir vs usar",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "El historial de Carlos demuestra el criterio más explícito de build vs buy del grupo: usó DigitalOcean (más económico que AWS) en lugar de construir infraestructura propia, adoptó WhatsApp Business API oficial (en lugar de Twilio o build propio), usa plantillas aprobadas por Meta en lugar de soluciones custom. Esto es exactamente lo que el cliente pidió: 'si funciona y es fácil de mantener, adelante'.",
+      "evidencia": "DigitalOcean vs AWS (decisión de coste). WhatsApp Business API oficial (herramienta ya hecha). MVPs en 6-12 semanas (pragmatismo en construcción)."
+    },
+    {
+      "dimension_id": "D5",
+      "dimension": "Entrega en plazos ajustados",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "Tiene el historial de entrega más explícito del grupo de aptos: 'MVPs funcionales en plazos cortos (6 a 12 semanas)'. Reservalia lanzado en 10 semanas con 2 semanas de margen. El cliente necesita entrega antes de julio (3 meses). Carlos es el único candidato que menciona explícitamente su velocidad de entrega como competencia.",
+      "evidencia": "Reservalia: lanzado en 10 semanas, 2 semanas de margen. Perfil indica MVPs en 6-12 semanas. Evidencia directa de velocidad."
+    },
+    {
+      "dimension_id": "D6",
+      "dimension": "Comunicación con no técnicos",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "Onboarding presencial con los primeros 8 clientes en Madrid y Barcelona: explicó el funcionamiento del sistema a personal no técnico. Exactamente el modelo que necesita la Clínica Valencia (Marcos quiere entender qué pasa, no desaparecer 2 meses).",
+      "evidencia": "Onboarding presencial con 8 clientes. Explicación a personal no técnico. Reuniones de seguimiento implícitas en modelo de producto SaaS."
+    },
+    {
+      "dimension_id": "D7",
+      "dimension": "Experiencia en sector salud",
+      "peso": 2,
+      "score": 4,
+      "justificacion": "CitaFácil fue específicamente para 'centros de salud, fisioterapia y estética en España' con 12 clínicas activas. Muy relevante. La diferencia con score 5 es que también tiene proyectos en turismo (Reservalia) y agencia (Pixelarte), por lo que no es 100% especialista en salud como Sofía o Elena.",
+      "evidencia": "CitaFácil: 12 centros de salud activos en España. También: Reservalia (hoteles), Pixelarte (agencia general)."
+    },
+    {
+      "dimension_id": "D8",
+      "dimension": "Stack e infraestructura adecuada al presupuesto",
+      "peso": 1,
+      "score": 5,
+      "justificacion": "DigitalOcean es la opción más económica del grupo: más barato que AWS, con Nginx y backups configurados. Laravel/PHP en el backend puede ser debatible para escalabilidad futura, pero para el volumen de la Clínica Valencia (3 médicos, 40-50 pacientes/día) es más que suficiente y reduce el tiempo de desarrollo.",
+      "evidencia": "DigitalOcean (más económico que AWS). Nginx + MySQL + Docker. Coste de infraestructura controlado."
+    }
+  ],
+
+  "calculo_score": {
+    "formula": "Σ(score × peso) / Σ(pesos)",
+    "detalle": "(5×3 + 4×3 + 5×3 + 5×3 + 5×2 + 5×2 + 4×2 + 5×1) / 19",
+    "numerador": 90,
+    "denominador": 19,
+    "score_final": 4.74,
+    "score_normalizado_100": 94.7
+  },
+
+  "resultado": "APTO",
+  "ranking_posicion": 2,
+
+  "fortalezas": [
+    "Único candidato que construyó y operó un SaaS de reservas médicas como fundador — responsabilidad total del producto",
+    "Historial de entrega más explícito del grupo: MVPs en 6-12 semanas, con deadline respetado documentado",
+    "Criterio build vs buy más evidente: DigitalOcean vs AWS, API oficial WhatsApp vs solución custom",
+    "Onboarding presencial con clientes no técnicos — exactamente lo que pide el cliente",
+    "Tasa de recordatorio efectivo del 87% con WhatsApp (resultado medible, no solo implementación)"
+  ],
+
+  "brechas": [
+    "Stack principal es Laravel/PHP — menos moderno que Python/FastAPI o Node.js, aunque perfectamente funcional para el volumen de la clínica",
+    "RGPD: sólido pero sin AIPD documentado ni certificación formal DPO (vs Elena Martínez)",
+    "No es especialista exclusivo en salud (también proyectos hoteleros y de agencia)"
+  ],
+
+  "preguntas_pendientes_para_entrevista": [
+    "CitaFácil cerró en 2026 — ¿qué pasó con los 12 clientes? ¿Fue un cierre planificado o hubo problemas? ¿Cómo se gestionó la transición?",
+    "Con un presupuesto de 8.000-12.000€ y 3 meses, ¿qué MVP mínimo entregarías y qué dejarías para una segunda fase?",
+    "¿Cómo harías la migración de los datos de pacientes existentes (Doctoralia) al nuevo sistema garantizando continuidad del servicio?"
+  ]
+}

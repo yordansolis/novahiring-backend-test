@@ -1,0 +1,651 @@
+# NovaHiring — Cómo funciona el sistema
+
+> **Versión:** 1.0.0 — Mayo 2026
+
+---
+
+## Índice
+
+1. [¿Qué hace NovaHiring?](#1-qué-hace-novahiring)
+2. [Las tres etapas del sistema](#2-las-tres-etapas-del-sistema)
+3. [¿Qué puede salir mal?](#3-qué-puede-salir-mal)
+4. [¿Cómo lo vamos a construir?](#4-cómo-lo-vamos-a-construir)
+5. [Cómo funciona cada etapa por dentro](#5-cómo-funciona-cada-etapa-por-dentro)
+6. [Plan de construcción](#6-plan-de-construcción)
+7. [Herramientas que vamos a usar](#7-herramientas-que-vamos-a-usar)
+
+---
+
+# 1. ¿Qué hace NovaHiring?
+
+NovaHiring no es un chatbot de preguntas genéricas. Es una plataforma que primero **entiende el problema real del cliente** (qué necesita, en qué contexto, con qué recursos) y a partir de eso construye automáticamente el perfil del candidato ideal y lo evalúa.
+
+La diferencia clave con otras herramientas:
+
+```
+Herramienta genérica:
+  Cliente → "Necesito un developer" → Preguntas estándar → Reporte
+
+NovaHiring:
+  Cliente → Cuéntame tu situación → Entendemos el contexto
+           → Construimos el perfil ideal para ESE cliente
+           → Entrevistamos con preguntas específicas para ESE perfil
+           → Reporte con justificación trazable
+           → El humano decide
+```
+
+**El sistema no reemplaza al reclutador. Le da información mejor organizada para que decida con más criterio.**
+
+---
+
+# 2. Las tres etapas del sistema
+
+El sistema funciona en cadena: cada etapa depende del resultado de la anterior.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   ETAPA 1          ETAPA 2              ETAPA 3                 │
+│   Discovery   ──▶  Perfil         ──▶  Entrevista              │
+│                                                                 │
+│  "¿Qué        "¿Cómo debe ser      "¿Este candidato            │
+│  necesitas?"   el candidato?"       cumple el perfil?"         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Etapa 1 — Discovery (Entender al cliente)
+
+El sistema conversa con el cliente para entender su contexto. No hace siempre las mismas preguntas — las adapta según lo que el cliente va respondiendo.
+
+**Ejemplo real:** Si el cliente dice "no tenemos equipo técnico", el sistema omite preguntas técnicas y asume automáticamente que el candidato necesita alta autonomía. No hay que preguntarlo.
+
+```
+¿Tienes equipo técnico? → "No"
+        │
+        ▼
+  [Omite preguntas técnicas]
+  [Anota automáticamente: autonomía requerida = ALTA]
+        │
+        ▼
+  Siguiente pregunta relevante
+```
+
+**¿Qué produce al final?**
+Un documento estructurado (JSON) con toda la información del cliente: urgencia, presupuesto, contexto del equipo, prioridades. Este documento es el punto de partida de todo lo demás.
+
+---
+
+## Etapa 2 — Construcción del Perfil (Sin IA)
+
+Con la información del cliente, el sistema construye el perfil del candidato ideal aplicando **reglas fijas**. No hay inteligencia artificial aquí — es lógica pura.
+
+**¿Por qué sin IA?**
+Porque el perfil tiene que ser predecible y trazable. Si el cliente dijo "presupuesto bajo", el sistema aumenta el peso de la habilidad "pragmatismo con herramientas" — siempre, de forma consistente, sin creatividad del modelo.
+
+```
+Información del cliente
+        │
+        ▼
+┌───────────────────────────────┐
+│      REGLAS FIJAS             │
+│                               │
+│  presupuesto = bajo           │
+│    → pragmatismo: peso alto   │
+│                               │
+│  equipo sin técnicos          │
+│    → autonomía: requerida     │
+│    → supervisión: descarte    │
+│                               │
+└───────────────────────────────┘
+        │
+        ▼
+Perfil del candidato ideal
+  - Habilidades obligatorias
+  - Habilidades deseables
+  - Criterios de descarte
+  - Puntajes y pesos
+```
+
+---
+
+## Etapa 3 — Entrevista y Evaluación
+
+El sistema conduce la entrevista con el candidato usando el perfil como guía. La IA evalúa las respuestas, pero **el código toma las decisiones duras** (descartes, puntajes finales).
+
+```
+Pregunta técnica
+        │
+        ▼
+Respuesta del candidato (texto libre)
+        │
+        ▼
+   IA evalúa la respuesta
+   "¿Qué tan bien contestó esto?"
+        │
+        ├──▶ Puntaje por dimensión (1-5)
+        │
+        ├──▶ ¿Activó criterio de descarte?
+        │         │
+        │         ▼
+        │    [CÓDIGO decide el descarte — no la IA]
+        │
+        └──▶ ¿Respuesta vaga? → Pregunta de seguimiento
+```
+
+Al final, el sistema genera un reporte con:
+- Puntaje total ponderado
+- Justificación de cada dimensión evaluada
+- Si hubo descarte: por qué exactamente
+- Trazabilidad completa (qué preguntó, qué respondió, cómo se evaluó)
+
+---
+
+# 3. ¿Qué puede salir mal?
+
+## Riesgos técnicos
+
+| Problema | Gravedad | Qué puede pasar |
+|----------|----------|-----------------|
+| La IA da puntajes inconsistentes | Alta | Dos candidatos iguales reciben notas distintas |
+| El sistema "olvida" el contexto en conversaciones largas | Alta | Hace preguntas que ya hizo o ignora respuestas anteriores |
+| La IA inventa datos que el cliente no dijo | Alta | El perfil se construye sobre información falsa |
+| Alguien manipula el sistema con sus respuestas | Alta | Un candidato puede "engañar" al evaluador con texto diseñado |
+| Las respuestas tardan mucho | Media | Mala experiencia de usuario |
+
+## Riesgos legales y de negocio
+
+| Problema | Qué implica |
+|----------|-------------|
+| Sesgos en la evaluación | Si el sistema discrimina por edad, género u origen, hay responsabilidad legal |
+| Protección de datos (GDPR) | Los datos de candidatos deben protegerse y poder eliminarse si se solicita |
+| Explicabilidad | En España, si una decisión automatizada afecta el empleo de alguien, esa persona puede pedir explicación |
+| Dependencia del proveedor de IA | Si Anthropic o OpenAI cambian su API, el sistema puede comportarse diferente |
+
+---
+
+# 4. ¿Cómo lo vamos a construir?
+
+## Opciones que evaluamos
+
+### Opción A — "La IA hace todo"
+
+Un solo prompt gigante con todas las reglas, el sistema completo dentro del modelo de lenguaje.
+
+```
+Cliente ──▶ [IA con todo dentro] ──▶ Resultado
+```
+
+**Problema:** La IA "olvida" reglas en conversaciones largas, inventa condiciones, los puntajes son inconsistentes. **No sirve para producción.**
+
+---
+
+### Opción B — Búsqueda semántica (RAG)
+
+Vectorizar todo el conocimiento y que la IA busque lo relevante en cada paso.
+
+**Problema:** RAG es para recuperar conocimiento de documentos (PDFs, artículos). Nuestras reglas son código estructurado, no documentos. Sería como usar un buscador para ejecutar un `if/else`. **Overengineering para este problema.**
+
+---
+
+### Opción C — Múltiples agentes de IA coordinados
+
+Un agente para discovery, otro para el perfil, otro para la entrevista, otro que los revisa a todos.
+
+**Problema:** Muy complejo de depurar, muy costoso, difícil de auditar. Los agentes de IA tienen sentido para tareas abiertas e impredecibles — no para reglas estructuradas como las nuestras. **Demasiado complejo para lo que necesitamos ahora.**
+
+---
+
+### Opción D — Código determinista + IA solo donde hace falta ✅
+
+El sistema central es código normal (Python). La IA solo interviene en los momentos donde hay lenguaje natural que interpretar: parsear respuestas abiertas del cliente, evaluar respuestas técnicas del candidato, generar el reporte final.
+
+```
+┌─────────────────────────────────────────────────┐
+│              SISTEMA NOVAHIRING                 │
+│                                                 │
+│  Código normal (Python)                         │
+│  ├── Gestiona el flujo de preguntas             │
+│  ├── Aplica las reglas de negocio               │
+│  ├── Calcula los puntajes                       │
+│  └── Aplica los descartes                       │
+│                                                 │
+│  IA (solo en estos puntos):                     │
+│  ├── Interpretar respuestas abiertas            │
+│  ├── Evaluar respuestas técnicas                │
+│  └── Redactar el reporte final                  │
+└─────────────────────────────────────────────────┘
+```
+
+**Esta es la opción elegida.** La IA es una herramienta de lenguaje, no el cerebro del sistema. El cerebro es el código.
+
+---
+
+# 5. Cómo funciona cada etapa por dentro
+
+## Arquitectura general
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                       NOVAHIRING                                 │
+│                                                                  │
+│  ┌────────────┐    ┌────────────┐    ┌──────────────────────┐    │
+│  │  Discovery  │───▶│   Perfil   │───▶│  Entrevista + Score  │    │
+│  │  (Etapa 1)  │    │  (Etapa 2) │    │  (Etapa 3)           │    │
+│  └─────┬───────┘    └─────┬──────┘    └──────────┬───────────┘    │
+│        │                 │                      │                │
+│  ┌─────▼─────────────────▼──────────────────────▼────────────┐   │
+│  │                  SERVICIOS CENTRALES                       │   │
+│  │  Gestor de estado · Reglas · Scoring · Log de auditoría    │   │
+│  └────────────────────────────┬───────────────────────────────┘   │
+│                               │                                   │
+│  ┌────────────────────────────▼───────────────────────────────┐   │
+│  │                  CAPA DE IA                                │   │
+│  │  (Solo se llama donde hay lenguaje natural que procesar)   │   │
+│  │  Parser · Generador de follow-up · Evaluador · Reportes    │   │
+│  └────────────────────────────┬───────────────────────────────┘   │
+│                               │                                   │
+│  ┌────────────────────────────▼───────────────────────────────┐   │
+│  │                  BASE DE DATOS / INFRA                     │   │
+│  │         PostgreSQL · Redis · Cola de tareas                │   │
+│  └────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Etapa 1 por dentro — Discovery Engine
+
+### Flujo de una conversación de discovery
+
+```
+Cliente escribe una respuesta
+           │
+           ▼
+  ¿Es una pregunta de selección?
+  (ej: "¿Alta, Media o Baja?")
+           │
+    Sí ────┴──── No (texto libre)
+    │                    │
+    ▼                    ▼
+Registra              IA interpreta
+directamente          el texto y extrae
+(sin IA)              los datos clave
+    │                    │
+    └────────┬───────────┘
+             ▼
+  ¿La siguiente pregunta tiene condición?
+             │
+    Sí ──────┴────── No
+    │                 │
+    ▼                 ▼
+¿Se cumple?       Hacer la pregunta
+    │
+ Sí → Hacer la pregunta
+ No → Saltar, continuar
+
+             ▼
+  ¿Se puede inferir un dato de lo que ya dijo?
+  Sí → Anotar automáticamente (sin preguntar)
+
+             ▼
+  ¿Ya están todas las preguntas obligatorias?
+  Sí → Validar y pasar a Etapa 2
+```
+
+**Regla principal de esta etapa:** La IA solo se usa para interpretar texto libre. El flujo de preguntas lo controla el código.
+
+---
+
+## Etapa 2 por dentro — Construcción del Perfil
+
+Esta etapa es pura lógica. Ejemplo de cómo funciona:
+
+```python
+# Simplificado para ilustrar el concepto
+def construir_perfil(datos_cliente):
+
+    if datos_cliente.presupuesto == "bajo":
+        perfil.pragmatismo_herramientas = "peso alto"
+
+    if datos_cliente.autonomia_requerida == "alta":
+        perfil.habilidades_requeridas.append("trabajo_independiente")
+        perfil.criterios_descarte.append("necesita_supervision_constante")
+
+    perfil.puntajes = calcular_pesos(datos_cliente)
+    perfil.preguntas_entrevista = generar_preguntas(datos_cliente)
+
+    return perfil
+```
+
+**¿Por qué no usar IA aquí?**
+
+Si la IA "enriquece" el perfil con información que el cliente no dijo, se pierde la trazabilidad. No podríamos responder: "¿Por qué se evaluó esta habilidad?" La respuesta tiene que ser siempre: "Porque el cliente dijo X."
+
+---
+
+## Etapa 3 por dentro — Entrevista y Evaluación
+
+### Los componentes principales
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   ENTREVISTA                            │
+│                                                         │
+│  1. Director de flujo     → Qué pregunta va ahora      │
+│     (código)                ¿Hace follow-up?           │
+│                             ¿Cuándo termina?           │
+│                                                         │
+│  2. Evaluador de respuesta → Lee la respuesta          │
+│     (IA con rúbrica)         Asigna puntaje 1-5        │
+│                              Justifica con evidencia    │
+│                                                         │
+│  3. Motor de descartes    → ¿Se activó un criterio     │
+│     (código, no IA)          de eliminación?           │
+│                              Sí → Candidato descartado  │
+│                                                         │
+│  4. Motor de scoring      → Calcula puntaje final      │
+│     (código, no IA)          con los pesos del perfil  │
+│                                                         │
+│  5. Generador de reporte  → Explica en lenguaje        │
+│     (IA)                     natural lo que calculó    │
+│                              el sistema                 │
+└─────────────────────────────────────────────────────────┘
+```
+
+### ¿Cómo evitamos que la IA sea inconsistente al evaluar?
+
+1. **Temperatura en 0** — la IA no improvisa, responde lo más determinista posible.
+2. **Rúbricas numéricas claras** — el prompt incluye ejemplos: "1 = no menciona el concepto, 3 = lo menciona sin profundidad, 5 = da ejemplo real con trade-offs".
+3. **Ejemplos incluidos** — mostramos al modelo una respuesta buena, una media y una mala con sus puntajes.
+4. **La respuesta exacta del candidato** — nunca un resumen, siempre el texto completo.
+5. **Validación del output** — si el puntaje está fuera de rango o la justificación no referencia la respuesta, se reintenta (máx. 2 veces).
+6. **Log de auditoría** — cada llamada a la IA queda registrada con el prompt, el output y el resultado.
+
+---
+
+## Servicios centrales
+
+### Gestor de estado (Redis)
+Las conversaciones pueden pausarse y reanudarse. El sistema guarda exactamente en qué pregunta va, qué se respondió, y qué puntajes lleva acumulados.
+
+```
+Sesión guardada:
+{
+  "pregunta_actual": "B3_P2",
+  "respuestas_previas": { ... },
+  "puntajes_acumulados": { "tecnico": 4, "comportamiento": 3 },
+  "expira_en": "7 días"
+}
+```
+
+### Log de auditoría (PostgreSQL)
+Cada evento importante queda registrado para que cualquier decisión sea explicable:
+
+```
+quién hizo qué → cuándo → con qué input → qué output produjo → cuánto tardó
+```
+
+Esto permite responder: "¿Por qué este candidato fue descartado?" con evidencia concreta.
+
+---
+
+## Flujo completo del sistema
+
+```
+CLIENTE                   SISTEMA                      CANDIDATO
+   │                         │                              │
+   │── Inicia discovery ─────▶│                              │
+   │                   Carga las preguntas del dataset       │
+   │◀── Pregunta 1 ───────────│                              │
+   │── Responde (texto) ──────▶│                              │
+   │                   IA interpreta la respuesta             │
+   │                   Valida el resultado                   │
+   │                   Evalúa condiciones                    │
+   │◀── Pregunta 2 (si aplica)─│                              │
+   │         ...               │                              │
+   │                   [Fin del discovery]                   │
+   │                   Construye el perfil (código puro)     │
+   │                   Calcula puntajes y preguntas          │
+   │                         │                              │
+   │                         │── Invita al candidato ──────▶│
+   │                         │                       Inicia entrevista
+   │                         │◀── Respuesta técnica ────────│
+   │                   IA evalúa la respuesta                │
+   │                   Código aplica descarte si aplica      │
+   │                   Código acumula el puntaje             │
+   │                         │◀── Más respuestas ───────────│
+   │                   [Fin de la entrevista]                │
+   │                   IA genera el reporte narrativo        │
+   │◀── Reporte final ────────│                              │
+   │                         │                              │
+HUMANO DECIDE                │                              │
+```
+
+---
+
+# 6. Plan de construcción
+
+## Fase 0 — La base (Semanas 1-2)
+
+Antes de construir funcionalidades, construimos la base correcta. Sin esto, todo lo demás falla.
+
+```
+□ Estructura del proyecto
+□ Base de datos con migraciones (PostgreSQL + Alembic)
+□ Redis configurado
+□ API base (FastAPI)
+□ Log de auditoría funcionando
+□ Contratos de datos definidos (DiscoveryJSON, CandidateProfile)
+□ Dataset de discovery convertido a JSON válido
+□ Tests del motor de scoring
+□ CI básico (lint + tests automáticos)
+```
+
+**¿Por qué empezar aquí?** El log de auditoría y los contratos de datos son imposibles de añadir después sin reescribir. Son infraestructura, no features.
+
+---
+
+## Fase 1 — MVP (Semanas 3-6)
+
+**Objetivo:** Flujo completo para un nicho (clínica médica). Un cliente real puede hacer un discovery y obtener un reporte de candidato.
+
+```
+Semanas 3-4: Etapa 1 (Discovery)
+  □ Motor de flujo de preguntas con lógica condicional
+  □ Soporte para: preguntas abiertas, selección única/múltiple, escala
+  □ IA para interpretar respuestas abiertas
+  □ Endpoint REST completo
+  □ Test con el caso de Clínica Salud Valencia
+
+Semanas 5-6: Etapas 2 y 3 básicas
+  □ Constructor de perfil (lógica determinista)
+  □ Motor de entrevista con preguntas del perfil
+  □ Evaluador de respuestas con rúbricas
+  □ Motor de descartes
+  □ Motor de scoring con pesos
+  □ Reporte básico en JSON
+```
+
+**Criterio de éxito del MVP:** Con el caso de Clínica Salud Valencia, el sistema debe (1) reproducir el perfil del documento de simulación, (2) conducir una entrevista coherente con ese perfil, (3) generar un reporte con justificación trazable.
+
+---
+
+## Fase 2 — V1 (Semanas 7-10)
+
+Sistema listo para clientes reales.
+
+```
+□ Preguntas de seguimiento dinámicas en la entrevista
+□ Reporte narrativo generado por IA
+□ Soporte para múltiples industrias/nichos
+□ Versionado de prompts de IA
+□ Suite de pruebas automáticas de los prompts
+□ UI mínima para revisar reportes
+□ Autenticación y rate limiting
+□ Documentación de la API
+```
+
+---
+
+## Fase 3 — Escalamiento (Semanas 11-16)
+
+```
+□ Procesamiento asíncrono (cola de tareas)
+□ Notificaciones por email/webhook
+□ Dashboard de métricas (latencia, costos de IA, tasa de descartes)
+□ Comparación de candidatos para la misma posición
+□ Exportación de reportes en PDF
+□ Integración con sistemas ATS externos
+```
+
+---
+
+## Fase 4 — Optimización (Meses 5-6)
+
+```
+□ Caché de evaluaciones similares (no re-evaluar respuestas casi idénticas)
+□ Búsqueda de candidatos similares con embeddings (pgvector)
+□ A/B testing de prompts del evaluador
+□ Detector de inconsistencias sistemáticas en el scoring
+```
+
+---
+
+## Fase 5 — Enterprise (Mes 7+)
+
+```
+□ Aislamiento completo por cliente (multi-tenant)
+□ Audit trail exportable para compliance legal
+□ GDPR: derecho al olvido, exportación de datos del candidato
+□ SSO / login con proveedor corporativo (SAML)
+□ Monitoreo de SLA
+□ Plan de recuperación ante desastres documentado y probado
+```
+
+---
+
+# 7. Herramientas que vamos a usar
+
+## Stack recomendado
+
+| Para qué | Herramienta | Por qué |
+|----------|-------------|---------|
+| Lenguaje | **Python 3.12** | Mejor ecosistema para IA, validación de datos con Pydantic |
+| API | **FastAPI** | Async nativo, genera documentación automáticamente |
+| Base de datos | **PostgreSQL 16** | Transacciones confiables, soporte para JSON, pgvector disponible |
+| Caché y sesiones | **Redis 7** | Rápido, TTL configurable, ideal para estado de sesión |
+| Cola de tareas | **Celery + Redis** | Para procesamiento asíncrono (reportes, notificaciones) |
+| Modelos de IA | **Claude Sonnet / Opus** | Muy bueno siguiendo instrucciones estructuradas y JSON |
+| Validación de datos | **Pydantic v2** | Integración nativa con FastAPI |
+| Migraciones de DB | **Alembic** | Estándar para SQLAlchemy |
+| Tests | **pytest + httpx** | Soporte async, fixtures |
+| CI/CD | **GitHub Actions** | Integración directa con el repo |
+| Cloud | **AWS (ECS/Fargate)** | Opciones de costo controladas, buen ecosistema |
+| Observabilidad | **Prometheus + Grafana** | Open source, sin dependencia de proveedor |
+
+---
+
+## Herramientas a evitar
+
+| Herramienta | Por qué no |
+|-------------|-----------|
+| **LangChain** | Demasiada abstracción, imposible de depurar, cambia constantemente |
+| **LangGraph** (para MVP) | Añade complejidad de grafo donde no es necesaria — quizás en V2 |
+| **MongoDB** | Las relaciones de datos son claras; NoSQL aquí solo agrega problemas de consistencia |
+| **Kubernetes** (para MVP) | Exagerado — ECS/Fargate o un EC2 bien configurado es suficiente |
+| **Fine-tuning** | Sin datos de entrenamiento, alto costo, baja mantenibilidad |
+| **RAG como arquitectura principal** | El problema no es recuperar conocimiento; es ejecutar lógica estructurada |
+| **Streamlit / Gradio** | Son herramientas de prototipado, no de producción |
+| **Flowise / n8n** | Low-code que oculta la lógica, imposible de auditar correctamente |
+
+---
+
+## Los tres errores más comunes en sistemas así
+
+**Error 1 — Dejar que la IA tome decisiones de negocio**
+"La IA sabrá cuándo descartar al candidato." No. La IA es un modelo estadístico; no aplica reglas con consistencia del 100%. Las decisiones duras (descartes, puntajes) van en código. La IA procesa lenguaje.
+
+**Error 2 — No versionar los prompts**
+Un cambio de prompt es un cambio de comportamiento del sistema. Sin versionado, no puedes saber qué prompt produjo qué evaluación. En un sistema de hiring, eso es un problema legal.
+
+**Error 3 — Querer construirlo todo de una vez**
+La tentación de diseñar el sistema multi-agente, con RAG, con fine-tuning, en el primer sprint. El resultado: 3 meses de desarrollo, ningún candidato evaluado, arquitectura que el equipo no entiende. La arquitectura de este documento se construye de forma incremental — cada fase agrega valor real.
+
+---
+
+## Decisiones no negociables desde el día 1
+
+1. **Los contratos de datos primero.** El `DiscoveryJSON` y `CandidateProfile` se definen antes de escribir cualquier lógica. Son el contrato entre las etapas.
+2. **Log de auditoría desde el primer commit.** No es una feature; es infraestructura. Sin él, el sistema nunca es auditable.
+3. **Test con el caso de Clínica Salud Valencia.** El documento de simulación es el test de aceptación del sistema. Si no reproduce ese output, algo está mal.
+4. **Prompts versionados en base de datos.** Nunca hardcodeados en el código.
+
+---
+
+## La pregunta que guía cada decisión técnica
+
+> **"¿Esta decisión hace el sistema más predecible o menos predecible?"**
+
+Si hace el sistema más impredecible, el beneficio tiene que ser muy alto para justificarlo.
+
+---
+
+---
+
+# 8. Caso de uso implementado — Clínica Salud Valencia
+
+> Esta sección conecta la arquitectura descrita con los archivos reales del primer caso de uso ejecutado.
+
+El discovery de la Clínica Salud Valencia ya fue completado (ver simulación en `specs/`). A partir de ese discovery se generaron los siguientes artefactos de datos:
+
+## Estructura de archivos
+
+```
+docs/
+├── specs/
+│   ├── 03-discovery_dataset.json                          ← Plantilla de preguntas (niche: clínica médica)
+│   └── 03-discovery_simulation_clinica_salud_valencia.md  ← Simulación completa del discovery con el cliente
+│
+├── data/
+│   ├── discovery-clinica-salud-valencia.json              ← OUTPUT Etapa 1: perfil del cliente estructurado
+│   │                                                         Incluye: problema de negocio, restricciones,
+│   │                                                         perfil del candidato, scorecard con pesos,
+│   │                                                         criterios de descarte (KO1, KO2, KO3)
+│   │
+│   └── evaluations/
+│       ├── eval-10-jhordan-solis.json     ← DESCARTADO — KO2 (sin RGPD sanitario)
+│       ├── eval-11-elena-martinez.json    ← APTA — #3 — Score: 4.58/5
+│       ├── eval-12-carlos-rivas.json      ← APTO — #2 — Score: 4.74/5
+│       ├── eval-13-sofia-delgado.json     ← APTA — #1 — Score: 4.84/5
+│       ├── eval-14-miguel-torres.json     ← DESCARTADO — KO1 + KO2 + KO3
+│       └── eval-15-ana-lombard.json       ← DESCARTADA — KO1 + KO2 + KO3
+│
+└── reports/
+    └── ranking-clinica-salud-valencia.md  ← OUTPUT Etapa 3: reporte final con ranking,
+                                              scores ponderados, justificaciones y
+                                              preguntas pendientes para entrevista real
+```
+
+## Cómo se relaciona con la arquitectura
+
+| Etapa | Archivo de entrada | Archivo de salida |
+|-------|-------------------|-------------------|
+| Etapa 1 — Discovery | `03-discovery_dataset.json` + conversación con cliente | `data/discovery-clinica-salud-valencia.json` |
+| Etapa 2 — Perfil | `data/discovery-clinica-salud-valencia.json` | Sección `perfil_candidato` + `scorecard` dentro del mismo JSON |
+| Etapa 3 — Evaluación | `perfil_candidato` + CVs en `cv-20-06-2026/` | `data/evaluations/eval-{id}-{nombre}.json` |
+| Reporte final | Todos los `eval-*.json` | `reports/ranking-clinica-salud-valencia.md` |
+
+## Resultado del primer caso
+
+De 6 candidatos evaluados: **3 descartados** por criterios de eliminación directa antes del scoring, **3 aptos** con ranking:
+
+1. **Sofía Delgado** — 4.84/5 — Misma tipología de proyecto, entregado en 11 semanas bajo plazo de 3 meses
+2. **Carlos Rivas** — 4.74/5 — Fundó CitaFácil (12 clínicas activas), mejor historial de entrega
+3. **Elena Martínez** — 4.58/5 — Mayor fiabilidad en producción (99,8% uptime), única certificación DPO
+
+---
+
+*Basado en: `01-mis-specs.md`, `02-mis-specs.md`, `03-discovery_dataset.json`, `03-discovery_simulation_clinica_salud_valencia.md` — Versión 1.0.0 — Mayo 2026*

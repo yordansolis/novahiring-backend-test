@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "15",
+    "nombre": "Ana Patricia Lombard Vidal",
+    "ubicacion": "Zaragoza, España",
+    "email": "ana.lombard.tech@gmail.com",
+    "años_experiencia": 6
+  },
+
+  "knockout_check": {
+    "superado": false,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "DESCARTE",
+        "evidencia": "El CV no menciona WhatsApp Business API ni ninguna integración de mensajería hacia el usuario final. Solo menciona notificaciones internas por email para flujos de aprobación corporativos (vacaciones, reportes internos). Su experiencia es en sistemas enterprise internos, no en canales de comunicación con clientes.",
+        "razon_descarte": "Sin experiencia en WhatsApp Business API (Meta). El cliente no acepta otra solución de notificaciones."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "DESCARTE",
+        "evidencia": "El CV no menciona RGPD, LOPDGDD, ni protección de datos sanitarios. Menciona 'controles de acceso basados en roles y trazabilidad de operaciones según las directrices del departamento legal del grupo' — pero esto es cumplimiento corporativo general (sector financiero/energético), no el RGPD especial de datos de salud.",
+        "razon_descarte": "Sin evidencia de conocimiento en datos de salud bajo categoría especial RGPD/LOPDGDD."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "DESCARTE",
+        "evidencia": "Siempre ha trabajado con equipos técnicos estructurados: '8 desarrolladores, 1 arquitecto técnico, 1 líder de proyecto'. Las decisiones de arquitectura las toma el equipo, no Ana individualmente. Su experiencia freelance fue 'trabajé coordinada con la agencia que gestionaba la relación con el cliente final', lo que indica que nunca tuvo contacto directo con el cliente no técnico.",
+        "razon_descarte": "Sin experiencia de trabajo autónomo para clientes sin perfil técnico. Siempre ha operado dentro de estructuras corporativas con supervisión."
+      }
+    ]
+  },
+
+  "descarte": {
+    "activado": true,
+    "knockout_id": "KO1, KO2, KO3",
+    "motivo": "Triple descarte: sin WhatsApp API, sin RGPD sanitario, sin autonomía técnica",
+    "justificacion": "Ana Patricia falla los tres criterios de descarte simultáneamente. Adicionalmente, su stack principal (Angular + Java Spring Boot + Oracle DB) es el más costoso y pesado del grupo para el contexto de la clínica: Angular para 3 médicos y una recepcionista es overengineering, Java Spring Boot requiere más infraestructura que Node.js o FastAPI, y Oracle DB tiene costes de licencia. Este es un perfil enterprise que encaja en corporaciones del sector financiero o energético, no en una clínica privada con presupuesto de 10.000€."
+  },
+
+  "resultado": "DESCARTADO",
+  "razon_descarte_resumida": "KO1 + KO2 + KO3 — Sin WhatsApp API, sin RGPD/LOPDGDD sanitario, sin autonomía técnica. Stack enterprise incompatible con el presupuesto y contexto del cliente.",
+
+  "nota_para_el_reclutador": "Ana es una desarrolladora senior competente para proyectos enterprise: dashboards complejos, Angular avanzado, Java, Oracle, equipos estructurados. Su perfil no tiene ningún punto de alineación con lo que necesita esta clínica privada. No recomendar para esta posición."
+}

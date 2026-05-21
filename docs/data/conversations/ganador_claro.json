@@ -1,0 +1,86 @@
+{
+  "scenario": "ganador_claro",
+  "description": "Candidata con experiencia completa en todos los requisitos. Debe quedar primera en el ranking.",
+  "candidate_name": "Sofía Delgado",
+  "candidate_id": "cand-13-sofia-delgado",
+  "answers": [
+    {
+      "dimension_id": "D1",
+      "dimension_name": "Integraciones técnicas obligatorias",
+      "question": "Describe tu experiencia integrando WhatsApp Business API (Meta). ¿Qué casos de uso implementaste y qué dificultades encontraste?",
+      "answer": "Integré la WhatsApp Business Cloud API de Meta en dos proyectos en producción. El primero fue para una clínica en Madrid: configuré templates de mensajes aprobados por Meta para recordatorios de cita, webhooks para confirmaciones del paciente y un flujo de baja automatizada con botones de respuesta rápida. El segundo fue para un SaaS de retail donde procesábamos 4.000 mensajes/día. Las dificultades principales fueron la verificación de negocio en Meta (tomó 3 semanas), el manejo de rate limiting con exponential backoff y la gestión de números de teléfono con formato internacional. También integré Google Calendar API con OAuth 2.0 para sincronización bidireccional de agendas médicas.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Demuestra experiencia documentada con WhatsApp Business Cloud API y Google Calendar en contexto sanitario real, incluyendo casos de uso avanzados como webhooks, templates y gestión de rate limiting.",
+      "simulated_ai_evidencia": "configuré templates de mensajes aprobados por Meta para recordatorios de cita"
+    },
+    {
+      "dimension_id": "D2",
+      "dimension_name": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "question": "¿Cómo has manejado la protección de datos sanitarios en proyectos anteriores? Menciona medidas técnicas concretas (cifrado, consentimiento, RAT) y si has trabajado con validación legal.",
+      "answer": "En el proyecto de la clínica en Madrid trabajé directamente con el DPO de la empresa y un asesor legal especializado en LOPDGDD. Implementamos: cifrado AES-256 en reposo y TLS 1.3 en tránsito para todos los datos de salud; un módulo de consentimiento granular que registraba timestamp, IP y versión del texto aceptado en base de datos inmutable; el Registro de Actividades de Tratamiento completo con base jurídica, plazos de retención y categorías de datos especiales (art. 9 RGPD). También configuré políticas de retención automática con borrado seguro (sobreescritura 3 pasadas) y auditamos todo con la AEPD antes de lanzar. Toda la lógica de consentimiento era código Python, nunca delegada a la IA.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Conocimiento técnico-legal completo de RGPD y LOPDGDD para datos sanitarios: cifrado, RAT, consentimiento granular, coordinación con DPO y auditoría AEPD.",
+      "simulated_ai_evidencia": "Registro de Actividades de Tratamiento completo con base jurídica, plazos de retención y categorías de datos especiales"
+    },
+    {
+      "dimension_id": "D3",
+      "dimension_name": "Autonomía y toma de decisiones técnicas",
+      "question": "Describe un proyecto donde tomaste decisiones de arquitectura en solitario. ¿Cuáles fueron las más importantes y cómo las justificaste ante el cliente?",
+      "answer": "Lideré en solitario el diseño y desarrollo de un sistema de gestión de turnos para una clínica dental en Valencia durante 4 meses. Tomé la decisión de usar PostgreSQL en lugar de MongoDB porque el cliente necesitaba reportes financieros complejos y las relaciones entre pacientes, citas y facturas eran altamente relacionales. Elegí Next.js sobre React puro porque el panel de administración necesitaba SSR para el SEO de la página pública de reservas. Rechacé usar un CRM externo (Salesforce Healthcare) porque el presupuesto era de €7.000 y el coste de licencias anuales lo habría consumido. Al cliente le expliqué las decisiones en términos de coste total de propiedad y riesgo de dependencia de terceros, sin jerga técnica. Me aprobaron todas las decisiones en la primera reunión.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Demuestra autonomía total en decisiones de arquitectura con justificación técnica y económica ante cliente no técnico, sin supervisión externa.",
+      "simulated_ai_evidencia": "Lideré en solitario el diseño y desarrollo... Rechacé usar un CRM externo porque el presupuesto era de €7.000"
+    },
+    {
+      "dimension_id": "D4",
+      "dimension_name": "Pragmatismo — criterio construir vs usar",
+      "question": "¿Cómo decides qué construir desde cero vs usar una solución de terceros? Dame un ejemplo concreto en un proyecto reciente.",
+      "answer": "Mi criterio es: construyo cuando el problema es el núcleo del negocio del cliente o cuando las soluciones existentes cuestan más que construir a 3 años vista. Uso librerías/SaaS para todo lo que es commodity. En el proyecto de la clínica dental elegí Stripe para pagos (no construí pasarela propia), Twilio SendGrid para emails transaccionales y FullCalendar como componente de calendario en el frontend. Pero construí desde cero el motor de reglas de disponibilidad de médicos porque era la lógica de negocio diferencial de la clínica y ningún producto externo la modelaba correctamente. También construí el módulo de RGPD porque necesitaba auditoría inmutable personalizada. Esta decisión ahorró €15.000 en licencias anuales.",
+      "simulated_ai_score": 4,
+      "simulated_ai_justificacion": "Criterio build vs buy claro y bien aplicado con ejemplos concretos. La justificación económica es sólida aunque podría profundizar en el análisis de riesgo a largo plazo.",
+      "simulated_ai_evidencia": "construyo cuando el problema es el núcleo del negocio del cliente o cuando las soluciones existentes cuestan más"
+    },
+    {
+      "dimension_id": "D5",
+      "dimension_name": "Entrega en plazos ajustados",
+      "question": "¿Has entregado un sistema funcional en producción en 3 meses o menos? Describe el proyecto, el plazo real y qué priorizaste para lograrlo.",
+      "answer": "Sí, en varias ocasiones. El más reciente fue el sistema de la clínica dental que mencioné: contrato firmado el 3 de enero, primer deploy en staging el 15 de febrero, producción el 28 de febrero (8 semanas). Usé la técnica de MVP vertical: primero desplegué solo el módulo de reservas online porque era lo que más impacto tenía para el cliente, aunque no estuviera integrado aún con el panel interno. Luego añadí el panel de recepción en la semana 5 y las integraciones de WhatsApp y Google Calendar en la semana 7. Al cliente le di acceso a staging en la semana 4 para que empezara a familiarizarse. El secreto fue priorizar funcionalidad sobre perfección y acordar con el cliente qué quedaba fuera del alcance inicial.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Entrega documentada en 8 semanas con estrategia MVP vertical clara, gestión de expectativas del cliente y priorización explícita del alcance.",
+      "simulated_ai_evidencia": "contrato firmado el 3 de enero, primer deploy en staging el 15 de febrero, producción el 28 de febrero"
+    },
+    {
+      "dimension_id": "D6",
+      "dimension_name": "Comunicación con no técnicos",
+      "question": "¿Cómo comunicas el avance técnico a clientes o directivos sin perfil tecnológico? Describe un ejemplo concreto.",
+      "answer": "Uso tres principios: nunca menciono tecnologías por nombre, siempre hablo en términos de funcionalidades que el cliente puede ver o tocar, y doy el avance como porcentaje de funcionalidades completadas, no de código escrito. En el proyecto de la clínica dental enviaba un email semanal los viernes con tres secciones: '¿Qué puede hacer hoy el sistema que ayer no podía?', '¿Qué se construye esta semana?' y '¿Hay algo que necesito de vuestro lado?'. El director médico me dijo después que era el primer proyecto de software en el que entendía qué estaba pasando en tiempo real. También hacía demos en vivo en vez de enviar capturas de pantalla.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Sistema de comunicación semanal estructurado, orientado al usuario final, con ejemplo concreto del impacto positivo en la percepción del cliente.",
+      "simulated_ai_evidencia": "enviaba un email semanal los viernes con tres secciones: ¿Qué puede hacer hoy el sistema que ayer no podía?"
+    },
+    {
+      "dimension_id": "D7",
+      "dimension_name": "Experiencia en sector salud",
+      "question": "¿Tienes experiencia trabajando en proyectos del sector salud, clínicas o gestión de citas? Describe el proyecto y qué aprendiste del contexto.",
+      "answer": "Dos proyectos directamente en salud. El primero, ya mencionado, fue el sistema de gestión de citas para la clínica dental en Valencia. El segundo fue un módulo de historia clínica electrónica básica para una clínica de fisioterapia en Barcelona (5 fisioterapeutas, 200 pacientes activos). En salud aprendí que los flujos de trabajo del personal sanitario son muy rígidos y no pueden interrumpirse para aprender software nuevo, así que la UX tiene que ser obvio-intuitiva desde el día 1. También entendí la sensibilidad especial de los datos de salud: el personal tiene pánico a que 'el sistema guarde cosas que no deberían guardarse'. Gestionar esa confianza requiere transparencia total sobre qué datos se almacenan y por qué.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Experiencia real en dos proyectos sanitarios con aprendizajes específicos sobre flujos de trabajo clínico, UX para personal sanitario y gestión de confianza en datos de salud.",
+      "simulated_ai_evidencia": "los flujos de trabajo del personal sanitario son muy rígidos y no pueden interrumpirse para aprender software nuevo"
+    },
+    {
+      "dimension_id": "D8",
+      "dimension_name": "Stack e infraestructura adecuada al presupuesto",
+      "question": "¿Qué stack tecnológico usarías para este proyecto con un presupuesto de 8.000–12.000€ y plazo de 3 meses? Justifica brevemente cada elección.",
+      "answer": "Backend: FastAPI + PostgreSQL (ya los conozco, productivo desde el día 1, sin curva de aprendizaje). Frontend: Next.js con Tailwind (SSR para la página pública de reservas, componentes reutilizables para el panel). Infraestructura: Railway o Render para el servidor (€20/mes, sin gestionar VPS), Supabase para la base de datos en los primeros 6 meses (tier gratuito hasta 500MB). WhatsApp: Meta Cloud API directo, sin intermediarios. Google Calendar: OAuth 2.0 con la librería oficial de Google. Esta pila me permite estar en producción en 2-3 semanas y tiene coste operativo de €25-40/mes, dejando presupuesto para imprevistos. Si el cliente crece, migrar a AWS o GCP es incremental.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Stack ajustado al presupuesto con justificación de cada elección, estimación de costes operativos y plan de escalado. Todas las integraciones requeridas están contempladas.",
+      "simulated_ai_evidencia": "coste operativo de €25-40/mes, dejando presupuesto para imprevistos"
+    }
+  ],
+  "expected_result": {
+    "weighted_score": "4.84",
+    "normalized_score": "0.9680",
+    "resultado": "APTO",
+    "ranking_position": 1
+  }
+}

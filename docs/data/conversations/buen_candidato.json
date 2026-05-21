@@ -1,0 +1,86 @@
+{
+  "scenario": "buen_candidato",
+  "description": "Candidato sólido con buena experiencia técnica pero sin profundidad en el sector salud. Debe quedar segundo.",
+  "candidate_name": "Carlos Rivas",
+  "candidate_id": "cand-12-carlos-rivas",
+  "answers": [
+    {
+      "dimension_id": "D1",
+      "dimension_name": "Integraciones técnicas obligatorias",
+      "question": "Describe tu experiencia integrando WhatsApp Business API (Meta). ¿Qué casos de uso implementaste y qué dificultades encontraste?",
+      "answer": "Implementé WhatsApp Business Cloud API en un proyecto de e-commerce para notificaciones de pedidos y confirmaciones de entrega. Configuré los webhooks, gestioné los templates de mensajes en el panel de Meta y manejé el flujo de opt-in de usuarios. También tengo experiencia con Google Calendar API para sincronización de reuniones en un sistema de reservas de salas de coworking. Las principales dificultades fueron el proceso de verificación de Meta y gestionar los límites de mensajes por día en las primeras semanas.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Experiencia práctica con WhatsApp Business Cloud API y Google Calendar API con casos de uso reales, incluyendo webhooks y gestión de templates.",
+      "simulated_ai_evidencia": "Configuré los webhooks, gestioné los templates de mensajes en el panel de Meta"
+    },
+    {
+      "dimension_id": "D2",
+      "dimension_name": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "question": "¿Cómo has manejado la protección de datos sanitarios en proyectos anteriores? Menciona medidas técnicas concretas (cifrado, consentimiento, RAT) y si has trabajado con validación legal.",
+      "answer": "Tengo experiencia con RGPD en proyectos de e-commerce y fintech: implementé módulos de consentimiento, políticas de retención de datos y cifrado en tránsito y reposo. Sin embargo, datos sanitarios específicamente no he manejado antes. Conozco que los datos de salud son categoría especial bajo el art. 9 del RGPD y que la LOPDGDD añade requisitos adicionales en España, pero no tengo experiencia directa con el RAT ni con la AEPD. Aprendería rápido y me asesoraría con un abogado especializado.",
+      "simulated_ai_score": 4,
+      "simulated_ai_justificacion": "Conocimiento sólido de RGPD general aplicado, pero admite explícitamente falta de experiencia con datos sanitarios categoría especial y el RAT.",
+      "simulated_ai_evidencia": "datos sanitarios específicamente no he manejado antes... no tengo experiencia directa con el RAT"
+    },
+    {
+      "dimension_id": "D3",
+      "dimension_name": "Autonomía y toma de decisiones técnicas",
+      "question": "Describe un proyecto donde tomaste decisiones de arquitectura en solitario. ¿Cuáles fueron las más importantes y cómo las justificaste ante el cliente?",
+      "answer": "En un proyecto de marketplace freelance diseñé toda la arquitectura solo: elegí microservicios sobre monolito porque el cliente esperaba escalar rápido y tenía partes del producto que necesitaban equipos separados. Tomé la decisión de usar Redis para las sesiones y las colas de trabajo en lugar de una solución más compleja. Presenté al CEO un diagrama simple de costes por mes en diferentes escenarios de tráfico para justificar cada elección. Trabajé durante 5 meses solo antes de que se uniera un segundo desarrollador.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Demuestra liderazgo técnico en solitario con decisiones de arquitectura documentadas y justificadas en términos económicos ante stakeholders no técnicos.",
+      "simulated_ai_evidencia": "Presenté al CEO un diagrama simple de costes por mes en diferentes escenarios de tráfico"
+    },
+    {
+      "dimension_id": "D4",
+      "dimension_name": "Pragmatismo — criterio construir vs usar",
+      "question": "¿Cómo decides qué construir desde cero vs usar una solución de terceros? Dame un ejemplo concreto en un proyecto reciente.",
+      "answer": "Mi regla es: si existe una solución que hace el 80% de lo que necesito al 20% del coste de construirlo, la uso. En el marketplace usé Stripe Connect para los pagos entre compradores y freelancers, aunque habría sido tecnológicamente más interesante construirlo. Usé Auth0 para la autenticación. Construí desde cero solo el motor de matching entre proyectos y freelancers porque era la diferenciación del producto. Esta decisión nos permitió lanzar en 10 semanas en lugar de 6 meses.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Criterio pragmático bien articulado con ejemplo concreto que demuestra el impacto en tiempo de entrega.",
+      "simulated_ai_evidencia": "Esta decisión nos permitió lanzar en 10 semanas en lugar de 6 meses"
+    },
+    {
+      "dimension_id": "D5",
+      "dimension_name": "Entrega en plazos ajustados",
+      "question": "¿Has entregado un sistema funcional en producción en 3 meses o menos? Describe el proyecto, el plazo real y qué priorizaste para lograrlo.",
+      "answer": "El marketplace lo entregué en 10 semanas como mencioné. También en un proyecto anterior de gestión de inventario para una cadena de tiendas: 8 semanas desde kick-off hasta producción. En ambos casos la clave fue definir el MVP al inicio y no dejarse llevar por peticiones de funcionalidades extra durante el desarrollo. Uso tableros Kanban con WIP limits para mantener el foco.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Historial consistente de entregas en menos de 3 meses con metodología clara y gestión explícita del alcance.",
+      "simulated_ai_evidencia": "la clave fue definir el MVP al inicio y no dejarse llevar por peticiones de funcionalidades extra"
+    },
+    {
+      "dimension_id": "D6",
+      "dimension_name": "Comunicación con no técnicos",
+      "question": "¿Cómo comunicas el avance técnico a clientes o directivos sin perfil tecnológico? Describe un ejemplo concreto.",
+      "answer": "Hago demos semanales en lugar de enviar reportes. El cliente puede ver el producto funcionando, no leer texto sobre el progreso. En el marketplace hacía una llamada de 30 minutos cada lunes donde mostraba las funcionalidades completadas la semana anterior en el ambiente de staging. Las preguntas del cliente me daban feedback inmediato sobre si iba en la dirección correcta. Si algo estaba bloqueado, lo decía sin rodeos explicando qué alternativas había y cuál recomendaba.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Enfoque orientado a demos en lugar de reportes, con retroalimentación continua. Comunicación directa y orientada a decisiones.",
+      "simulated_ai_evidencia": "Hago demos semanales en lugar de enviar reportes... El cliente puede ver el producto funcionando"
+    },
+    {
+      "dimension_id": "D7",
+      "dimension_name": "Experiencia en sector salud",
+      "question": "¿Tienes experiencia trabajando en proyectos del sector salud, clínicas o gestión de citas? Describe el proyecto y qué aprendiste del contexto.",
+      "answer": "No tengo experiencia directa en salud. Mi experiencia es en e-commerce, fintech y SaaS. Entiendo que el sector salud tiene particularidades importantes (regulación, sensibilidad de datos, flujos de trabajo del personal), y estaría dispuesto a hacer un período de inmersión con el equipo de la clínica las primeras semanas para entender cómo trabajan antes de escribir una sola línea de código.",
+      "simulated_ai_score": 4,
+      "simulated_ai_justificacion": "Sin experiencia en sector salud pero con consciencia clara de sus particularidades y disposición a aprender. No aporta experiencia concreta.",
+      "simulated_ai_evidencia": "No tengo experiencia directa en salud... estaría dispuesto a hacer un período de inmersión"
+    },
+    {
+      "dimension_id": "D8",
+      "dimension_name": "Stack e infraestructura adecuada al presupuesto",
+      "question": "¿Qué stack tecnológico usarías para este proyecto con un presupuesto de 8.000–12.000€ y plazo de 3 meses? Justifica brevemente cada elección.",
+      "answer": "Backend Node.js con Express y PostgreSQL, que es mi stack más productivo. Frontend React con Vite. Para el despliegue usaría Railway o Fly.io, que son baratos y simples de operar. WhatsApp Cloud API directamente sin intermediarios. Google Calendar con la SDK oficial. Coste estimado de infraestructura: €30-50/mes. Si el cliente quisiera Next.js para el SEO de la página de reservas también podría adaptarme.",
+      "simulated_ai_score": 5,
+      "simulated_ai_justificacion": "Stack coherente con el presupuesto y plazo, con estimación de costes operativos y todas las integraciones requeridas cubiertas.",
+      "simulated_ai_evidencia": "Coste estimado de infraestructura: €30-50/mes"
+    }
+  ],
+  "expected_result": {
+    "weighted_score": "4.74",
+    "normalized_score": "0.9480",
+    "resultado": "APTO",
+    "ranking_position": 2
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "13",
+    "nombre": "Sofía Delgado Herrera",
+    "ubicacion": "Barcelona, España (abierta a trabajo híbrido en cualquier ciudad)",
+    "email": "sofia.delgado.engineer@gmail.com",
+    "años_experiencia": 8
+  },
+
+  "knockout_check": {
+    "superado": true,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "PASA",
+        "evidencia": "SaludConnect: integró la API oficial de WhatsApp Business (Meta Cloud API) para recordatorios automáticos 24h antes de la cita, con opción de confirmación o cancelación desde el propio chat. También experiencia previa con Twilio en Clínica Vitalia."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "PASA",
+        "evidencia": "Implementación más completa del grupo: cifrado AES-256 en reposo, TLS en tránsito, gestión de consentimientos, minimización de datos, política de retención de 5 años (normativa sanitaria española), RAT, AIPD. Formación específica: 'Protección de Datos en el Sector Sanitario — AEPD + SEDIA 2022'."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "PASA",
+        "evidencia": "SaludConnect fue un 'proyecto en solitario': diseñó y desarrolló desde cero para 4 clínicas, tomando 'todas las decisiones de arquitectura de forma independiente'. Entregado en 11 semanas. 8 años de carrera con autonomía progresiva y proyectos independientes."
+      }
+    ]
+  },
+
+  "scores": [
+    {
+      "dimension_id": "D1",
+      "dimension": "Integraciones técnicas obligatorias",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "Cubre las 4 integraciones con el mayor nivel de detalle del grupo: WhatsApp Meta Cloud API con opción de confirmación/cancelación desde el chat (funcionalidad adicional no pedida), Google Calendar OAuth 2.0 con actualización en tiempo real, panel de recepción con vista unificada por médico y especialidad, y módulo de reserva online con disponibilidad en tiempo real. Todo en producción.",
+      "evidencia": "SaludConnect: WhatsApp Meta Cloud API (confirmación bidireccional), Google Calendar OAuth 2.0 (tiempo real), panel recepción (vista unificada, gestión por médico/especialidad), reserva online (disponibilidad en tiempo real)."
+    },
+    {
+      "dimension_id": "D2",
+      "dimension": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "La implementación RGPD más completa del grupo. AES-256 en reposo + TLS en tránsito + consentimientos + minimización + retención 5 años (normativa sanitaria española) + RAT + AIPD. Además, formación específica en protección de datos sanitarios (AEPD + SEDIA). El AIPD es el documento más avanzado de cumplimiento y ningún otro candidato lo menciona.",
+      "evidencia": "AES-256, TLS, consentimientos, minimización, retención 5 años, RAT, AIPD. Formación: 'Protección de Datos en el Sector Sanitario — AEPD + SEDIA 2022'. Validación legal documentada."
+    },
+    {
+      "dimension_id": "D3",
+      "dimension": "Autonomía y toma de decisiones técnicas",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "Descripción más explícita de autonomía del grupo: 'acostumbrada a trabajar sin supervisión técnica, tomando todas las decisiones de arquitectura de forma independiente'. SaludConnect fue 'proyecto en solitario' para 4 clínicas. 8 años de carrera con proyectos propios y en sectores exigentes.",
+      "evidencia": "'Proyecto en solitario'. 'Todas las decisiones de arquitectura de forma independiente'. 4 clínicas + carrera freelance + experiencia en empresas. 8 años de autonomía progresiva."
+    },
+    {
+      "dimension_id": "D4",
+      "dimension": "Pragmatismo — criterio construir vs usar",
+      "peso": 3,
+      "score": 4,
+      "justificacion": "Usa servicios cloud maduros (GCP Cloud Run, Google Calendar API, WhatsApp API oficial). También usa CI/CD vía GitHub Actions (herramienta existente) en lugar de construir pipelines propios. Tiene formación específica en 'Gestión de proyectos ágiles en solitario (metodología lean para freelance)', lo que sugiere pragmatismo en la ejecución. Sin embargo, no hace mención explícita del criterio build vs buy como Carlos.",
+      "evidencia": "GCP Cloud Run (serverless, no gestiona servidores), GitHub Actions (CI/CD listo), APIs oficiales. Formación lean para freelance."
+    },
+    {
+      "dimension_id": "D5",
+      "dimension": "Entrega en plazos ajustados",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "SaludConnect entregado en 11 semanas (por debajo del plazo de 3 meses acordado). Es el único candidato que documenta un proyecto con el mismo plazo que el cliente solicita (3 meses) y que lo entregó con antelación. Esto es evidencia directa y cuantificada.",
+      "evidencia": "SaludConnect: 'Sistema completo entregado en 11 semanas (por debajo del plazo de 3 meses acordado)'. Plazo respetado y adelantado."
+    },
+    {
+      "dimension_id": "D6",
+      "dimension": "Comunicación con no técnicos",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "Reuniones quincenales con la dirección y con Lucía (recepcionista) para validar funcionalidades y recoger feedback. Perfil describe explícitamente: 'preparo resúmenes semanales de avance en lenguaje llano y adapto las entregas a los tiempos del negocio'. Incluye a la recepcionista en el proceso — exactamente el rol de Lucía en la Clínica Valencia.",
+      "evidencia": "Reuniones quincenales con dirección y recepcionista. Resúmenes semanales en lenguaje llano. Mención explícita de Lucía (recepcionista) como stakeholder — coincidencia literal con el caso del cliente."
+    },
+    {
+      "dimension_id": "D7",
+      "dimension": "Experiencia en sector salud",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "8 años construyendo sistemas específicamente en salud y bienestar: 4 clínicas privadas (SaludConnect), historia clínica digital (Clínica Vitalia), freelance con psicólogos, fisioterapeutas y nutricionistas. Es la candidata con mayor profundidad y especialización en el sector del grupo. Menciona explícitamente la apertura de fisioterapia como caso de uso conocido.",
+      "evidencia": "SaludConnect (4 clínicas), Clínica Vitalia (historia clínica + agenda + facturación), freelance salud/bienestar (18 proyectos). Sector salud durante toda su carrera."
+    },
+    {
+      "dimension_id": "D8",
+      "dimension": "Stack e infraestructura adecuada al presupuesto",
+      "peso": 1,
+      "score": 5,
+      "justificacion": "GCP Cloud Run es la opción más económica y escalable del grupo: serverless (pago por uso, sin servidores activos sin tráfico), Cloud SQL gestionado, Cloud Storage, CI/CD con GitHub Actions. Para un presupuesto de 8.000-12.000€ con posible duplicación de volumen en 12 meses (apertura fisioterapia), Cloud Run escala automáticamente sin coste adicional de arquitectura.",
+      "evidencia": "GCP Cloud Run (serverless, pago por uso), Cloud SQL, Cloud Storage. CI/CD con GitHub Actions. Opción más económica y elástica del grupo para el volumen de la clínica."
+    }
+  ],
+
+  "calculo_score": {
+    "formula": "Σ(score × peso) / Σ(pesos)",
+    "detalle": "(5×3 + 5×3 + 5×3 + 4×3 + 5×2 + 5×2 + 5×2 + 5×1) / 19",
+    "numerador": 92,
+    "denominador": 19,
+    "score_final": 4.84,
+    "score_normalizado_100": 96.8
+  },
+
+  "resultado": "APTO",
+  "ranking_posicion": 1,
+
+  "fortalezas": [
+    "Único proyecto documentado entregado en el mismo plazo que el cliente solicita (11 semanas, plazo 3 meses) — y con adelanto",
+    "Implementación RGPD más completa del grupo: incluye AIPD además del RAT, con formación específica en datos sanitarios (AEPD+SEDIA)",
+    "Mencionó explícitamente a la recepcionista como stakeholder en las reuniones — alineación directa con el rol de Lucía",
+    "8 años de experiencia exclusivamente en salud y bienestar — la especialización sectorial más profunda del grupo",
+    "GCP Cloud Run: infraestructura serverless más económica y elástica para el volumen y presupuesto del proyecto",
+    "Abierta a trabajo híbrido en cualquier ciudad: sin restricción geográfica para el arranque presencial en Valencia"
+  ],
+
+  "brechas": [
+    "Pragmatismo build vs buy no explicitado en el CV (aunque el stack lo demuestra indirectamente)",
+    "Sin certificación formal DPO (aunque la formación AEPD+SEDIA y el AIPD son más específicos que el DPO básico de Elena)"
+  ],
+
+  "preguntas_pendientes_para_entrevista": [
+    "En SaludConnect, ¿qué decidiste construir desde cero y qué usaste de herramientas existentes? ¿Cuál fue el criterio?",
+    "Con un presupuesto de 8.000-12.000€, ¿qué parte del sistema garantizarías para el lanzamiento en junio y qué dejarías en hoja de ruta?",
+    "¿Cómo harías la integración con Google Calendar si uno de los médicos sigue usando agenda de papel? ¿Qué recomendarías al cliente?"
+  ]
+}

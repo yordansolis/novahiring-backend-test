@@ -1,0 +1,442 @@
+{
+  "meta": {
+    "version": "1.2.0",
+    "niche": "clinica_medica",
+    "description": "Dataset de preguntas para el chatbot de descubrimiento con el cliente. Alimenta la generación automática del perfil de candidato y las preguntas del chatbot de entrevista.",
+    "bloques": [
+      "problema_negocio",
+      "producto_sistema",
+      "contexto_equipo",
+      "restricciones_reales"
+    ],
+    "nota": "Las preguntas con campo 'condicion' solo se hacen si se cumple esa condición. Las preguntas con 'inferida_de' no se hacen: el sistema extrae la respuesta de una pregunta anterior."
+  },
+
+  "preguntas": [
+
+    // ─────────────────────────────────────────────────────────────────
+    // BLOQUE 1 — PROBLEMA DE NEGOCIO
+    // ─────────────────────────────────────────────────────────────────
+    {
+      "id": "B1_P1",
+      "bloque": "problema_negocio",
+      "orden": 1,
+      "pregunta": "¿Cuál es el problema principal que os está causando más fricción hoy en la clínica?",
+      "tipo": "abierta",
+      "opciones": null,
+      "ejemplos_respuesta": [
+        "Los pacientes llaman para pedir cita y muchas veces nadie puede coger el teléfono",
+        "No tenemos nada centralizado, cada médico lleva su propia agenda",
+        "Se nos olvida confirmar citas y hay muchas ausencias"
+      ],
+      "seguimiento": "¿Eso os está afectando en ingresos, en carga de trabajo del equipo o en la satisfacción de los pacientes?",
+      "genera": ["perfil.conocimiento_dominio", "entrevista.preguntas_situacionales"],
+      "peso": 3,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B1_P2",
+      "bloque": "problema_negocio",
+      "orden": 2,
+      "pregunta": "¿Qué mejoraría si ese problema desapareciera? Por ejemplo: menos citas perdidas, menos tiempo al teléfono, todo en un solo sitio...",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Perder menos citas por llamadas no atendidas",
+        "Que los pacientes no olviden sus citas",
+        "Tener toda la información de los pacientes en un solo sitio",
+        "Reducir el trabajo manual del personal de recepción",
+        "Otro"
+      ],
+      "seguimiento": "¿Tenéis algún número aproximado de cuánto os cuesta ese problema hoy? Por ejemplo, citas perdidas por semana o tiempo dedicado a llamadas.",
+      "genera": ["perfil.criterios_exito", "entrevista.comprension_negocio"],
+      "peso": 2,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B1_P3",
+      "bloque": "problema_negocio",
+      "orden": 3,
+      "pregunta": "¿Qué creéis que pasaría si esto sigue igual otros seis meses?",
+      "tipo": "abierta",
+      "opciones": null,
+      "seguimiento": null,
+      "genera": ["perfil.nivel_urgencia", "entrevista.preguntas_situacionales"],
+      "peso": 1,
+      "obligatoria": false
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // BLOQUE 2 — PRODUCTO O SISTEMA A CONSTRUIR
+    // ─────────────────────────────────────────────────────────────────
+    {
+      "id": "B2_P1",
+      "bloque": "producto_sistema",
+      "orden": 1,
+      "pregunta": "¿Tenéis algún programa o sistema para gestionar citas hoy, o todo funciona a mano?",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Todo a mano, no hay ningún sistema",
+        "Usamos alguna herramienta pero no cubre todo lo que necesitamos",
+        "Tenemos algo propio que hay que mejorar o ampliar",
+        "Usamos varias herramientas sueltas que no están conectadas entre sí"
+      ],
+      "seguimiento": "¿Qué herramienta usáis y qué es lo que no os cubre?",
+      "genera": ["perfil.tipo_proyecto", "entrevista.preguntas_arquitectura"],
+      "peso": 3,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B2_P2",
+      "bloque": "producto_sistema",
+      "orden": 2,
+      "pregunta": "¿Qué funcionalidades son imprescindibles desde el primer día? No todo lo que queréis, solo lo que no puede faltar.",
+      "tipo": "opcion_multiple",
+      "opciones": [
+        "Que los pacientes puedan pedir cita por internet",
+        "Avisos automáticos al paciente antes de la cita",
+        "Historial del paciente accesible para los médicos",
+        "Un panel para que recepción gestione todas las citas",
+        "Acceso del paciente a sus propias citas",
+        "Cobros o facturación",
+        "Integración con laboratorios o resultados de pruebas"
+      ],
+      "seguimiento": "De todo eso, ¿cuál es lo más crítico? ¿Lo que si falla, falla todo?",
+      "genera": [
+        "perfil.habilidades.interfaz_usuario",
+        "perfil.habilidades.gestion_datos",
+        "perfil.habilidades.integraciones",
+        "entrevista.preguntas_tecnicas"
+      ],
+      "peso": 3,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B2_P3",
+      "bloque": "producto_sistema",
+      "orden": 3,
+      "pregunta": "¿El sistema tendría que conectarse con alguna aplicación o servicio que ya uséis?",
+      "tipo": "opcion_multiple",
+      "opciones": [
+        "WhatsApp para enviar avisos a los pacientes",
+        "Google Calendar u otro calendario que usen los médicos",
+        "Una pasarela de cobros online",
+        "Un programa médico o de gestión que ya tenemos",
+        "Correo electrónico o mensajes de texto",
+        "De momento ninguna"
+      ],
+      "seguimiento": "¿Tenéis ya contratado el acceso a alguno de esos servicios?",
+      "genera": [
+        "perfil.habilidades.integraciones_externas",
+        "entrevista.preguntas_integraciones"
+      ],
+      "peso": 2,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B2_P4",
+      "bloque": "producto_sistema",
+      "orden": 4,
+      "pregunta": "¿Cuántas personas usarían el sistema en el día a día? Pensad en médicos, recepción y pacientes.",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Pocos usuarios: 1 a 3 médicos y menos de 50 pacientes al día",
+        "Volumen medio: hasta 10 médicos y unos 500 pacientes al día",
+        "Volumen alto: más de 10 médicos o varias sedes",
+        "Aún no lo sabemos"
+      ],
+      "seguimiento": "¿Tenéis planes de crecer o abrir más consultorios en el corto plazo?",
+      "genera": [
+        "perfil.habilidades.escalabilidad",
+        "perfil.habilidades.infraestructura",
+        "entrevista.preguntas_diseno_sistema"
+      ],
+      "peso": 2,
+      "obligatoria": false
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // BLOQUE 3 — CONTEXTO DEL EQUIPO
+    // ─────────────────────────────────────────────────────────────────
+    {
+      "id": "B3_P1",
+      "bloque": "contexto_equipo",
+      "orden": 1,
+      "pregunta": "¿Hay alguien en vuestra empresa con perfil técnico que pueda colaborar o hacer seguimiento del trabajo del desarrollador?",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "No, somos un equipo sin perfil técnico",
+        "Hay alguien con conocimientos básicos pero no es desarrollador",
+        "Sí, hay un responsable técnico que puede supervisar",
+        "Sí, hay un equipo técnico propio"
+      ],
+      "seguimiento": "¿Esa persona podría revisar el trabajo o tomar decisiones técnicas, o solo hace de interlocutor?",
+      "condicion": null,
+      "inferida_de": null,
+      "genera": [
+        "perfil.habilidades_blandas.autonomia",
+        "perfil.habilidades_blandas.liderazgo",
+        "entrevista.preguntas_comportamiento"
+      ],
+      "peso": 3,
+      "obligatoria": true,
+      "nota": "Si la respuesta es 'No' y B2_P4 indica volumen bajo, el sistema infiere autonomía alta y omite B3_P2 y B3_P3."
+    },
+
+    {
+      "id": "B3_P2",
+      "bloque": "contexto_equipo",
+      "orden": 2,
+      "pregunta": "¿Quién tomaría las decisiones importantes sobre cómo construir el sistema? Por ejemplo, elegir qué herramientas usar o cómo organizar la información.",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "El propio desarrollador, tiene total autonomía",
+        "El desarrollador propone y alguien de la empresa aprueba",
+        "Lo decide la dirección, el desarrollador solo ejecuta",
+        "Todavía no está claro"
+      ],
+      "seguimiento": "¿Esperáis que el desarrollador también proponga cómo evolucionar el sistema a futuro, o solo que construya lo que le pidáis?",
+      "condicion": {
+        "pregunta_id": "B3_P1",
+        "si_respuesta_es": [
+          "Hay alguien con conocimientos básicos pero no es desarrollador",
+          "Sí, hay un responsable técnico que puede supervisar",
+          "Sí, hay un equipo técnico propio"
+        ],
+        "accion": "mostrar"
+      },
+      "genera": [
+        "perfil.senales_seniority.autonomia_arquitectura",
+        "entrevista.preguntas_diseno_sistema",
+        "entrevista.preguntas_comportamiento"
+      ],
+      "peso": 2,
+      "obligatoria": false,
+      "nota": "Si B3_P1 es 'No, somos un equipo sin perfil técnico', esta pregunta se omite y se infiere que el desarrollador decide todo."
+    },
+
+    {
+      "id": "B3_P3",
+      "bloque": "contexto_equipo",
+      "orden": 3,
+      "pregunta": "¿Cómo trabaja hoy vuestro equipo técnico? ¿Hay procesos definidos o cada uno hace las cosas a su manera?",
+      "tipo": "escala",
+      "escala": {
+        "min": 1,
+        "max": 5,
+        "etiquetas": {
+          "1": "Sin procesos, cada uno trabaja como puede",
+          "3": "Hay algunas normas básicas pero no son estrictas",
+          "5": "Procesos claros, revisiones de código y pruebas antes de publicar"
+        }
+      },
+      "seguimiento": "¿Esperáis que el desarrollador implante esos procesos o que se adapte a lo que ya existe?",
+      "condicion": {
+        "pregunta_id": "B3_P1",
+        "si_respuesta_es": [
+          "Sí, hay un responsable técnico que puede supervisar",
+          "Sí, hay un equipo técnico propio"
+        ],
+        "accion": "mostrar"
+      },
+      "genera": [
+        "perfil.habilidades.despliegue_y_pruebas",
+        "entrevista.preguntas_madurez_procesos"
+      ],
+      "peso": 2,
+      "obligatoria": false,
+      "nota": "Solo relevante si ya hay un equipo técnico. En clínicas pequeñas sin perfil técnico, se omite."
+    },
+
+    // ─────────────────────────────────────────────────────────────────
+    // BLOQUE 4 — RESTRICCIONES REALES
+    // ─────────────────────────────────────────────────────────────────
+    {
+      "id": "B4_P1",
+      "bloque": "restricciones_reales",
+      "orden": 1,
+      "pregunta": "¿Para cuándo necesitáis que el sistema esté funcionando?",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Urgente, en menos de un mes",
+        "En uno a tres meses",
+        "En tres a seis meses",
+        "Sin urgencia, más de seis meses"
+      ],
+      "seguimiento": "¿Hay alguna fecha o evento importante que marque ese plazo? Por ejemplo, una temporada alta, una auditoría o un lanzamiento.",
+      "genera": [
+        "perfil.senales_seniority.velocidad_entrega",
+        "perfil.habilidades_blandas.priorizacion",
+        "entrevista.preguntas_situacionales"
+      ],
+      "peso": 2,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B4_P2",
+      "bloque": "restricciones_reales",
+      "orden": 2,
+      "pregunta": "¿Cuánto tenéis pensado invertir en el desarrollo?",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Menos de 5.000 €",
+        "Entre 5.000 € y 20.000 €",
+        "Entre 20.000 € y 60.000 €",
+        "Más de 60.000 €",
+        "Aún no tenemos un presupuesto definido"
+      ],
+      "seguimiento": "¿Ese presupuesto es solo para construirlo o también incluye lo que cuesta mantenerlo en marcha?",
+      "genera": [
+        "perfil.restricciones.nivel_presupuesto",
+        "perfil.senales_seniority.pragmatismo_herramientas",
+        "entrevista.preguntas_situacionales"
+      ],
+      "peso": 3,
+      "obligatoria": true,
+      "nota": "Presupuesto bajo con plazo corto activa la evaluación de criterio: ¿el candidato sabe cuándo no construir desde cero?"
+    },
+
+    {
+      "id": "B4_P3",
+      "bloque": "restricciones_reales",
+      "orden": 3,
+      "pregunta": "¿Hay algún programa, sistema o servicio que el desarrollador deba usar obligatoriamente porque ya lo tenéis contratado o porque el equipo ya lo conoce?",
+      "tipo": "abierta",
+      "opciones": null,
+      "ejemplos_respuesta": [
+        "Tenemos todo en Microsoft, necesitamos que sea compatible",
+        "Usamos Google Workspace y queremos seguir en ese ecosistema",
+        "No hay ninguna restricción, que el desarrollador elija lo que sea mejor"
+      ],
+      "seguimiento": "¿Esa restricción es inamovible o podríais cambiarla si hubiera una razón de peso?",
+      "genera": [
+        "perfil.habilidades.herramientas_obligatorias",
+        "entrevista.preguntas_tecnicas"
+      ],
+      "peso": 3,
+      "obligatoria": true
+    },
+
+    {
+      "id": "B4_P4",
+      "bloque": "restricciones_reales",
+      "orden": 4,
+      "pregunta": "Con el plazo y el presupuesto que mencionasteis, ¿estaríais abiertos a que el desarrollador use programas ya hechos para algunas partes del sistema, en vez de construirlo todo desde cero? El objetivo sería ahorrar tiempo y coste sin sacrificar calidad.",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Sí, si funciona bien y es fácil de mantener, adelante",
+        "Depende, que el desarrollador lo justifique antes",
+        "Preferimos que todo sea propio para no depender de terceros",
+        "No lo habíamos pensado, ¿qué implicaría eso?"
+      ],
+      "seguimiento": "¿Habéis tenido alguna mala experiencia con herramientas externas que os dejaran tirados en algún momento?",
+      "genera": [
+        "perfil.senales_seniority.pragmatismo_herramientas",
+        "perfil.senales_seniority.criterio_construir_vs_usar",
+        "entrevista.preguntas_situacionales",
+        "entrevista.preguntas_diseno_sistema"
+      ],
+      "peso": 3,
+      "obligatoria": true,
+      "nota": "Si la respuesta es 'Sí', la entrevista al candidato debe incluir preguntas de criterio sobre cuándo usar herramientas existentes y cuándo construir."
+    },
+
+    {
+      "id": "B4_P5",
+      "bloque": "restricciones_reales",
+      "orden": 5,
+      "pregunta": "¿Manejáis datos de salud de los pacientes? Por ejemplo, historiales, diagnósticos o resultados de pruebas.",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Sí, y sabemos que hay obligaciones legales al respecto",
+        "Sí, pero no sabemos exactamente qué implica eso legalmente",
+        "Solo datos básicos de contacto, nada clínico",
+        "No manejamos datos de pacientes"
+      ],
+      "seguimiento": "¿Tenéis asesoría legal que pueda validar cómo se protegen esos datos una vez el sistema esté construido?",
+      "genera": [
+        "perfil.habilidades.seguridad_datos",
+        "perfil.habilidades.cumplimiento_legal",
+        "entrevista.preguntas_seguridad"
+      ],
+      "peso": 3,
+      "obligatoria": true,
+      "nota": "En España, los datos de salud son categoría especial bajo el RGPD y la LOPDGDD. El candidato debe entender las implicaciones técnicas aunque no sea abogado."
+    },
+
+    {
+      "id": "B4_P6",
+      "bloque": "restricciones_reales",
+      "orden": 6,
+      "pregunta": "¿Cómo preferís trabajar con el desarrollador: que venga a la clínica, que trabaje desde casa, o una combinación de las dos?",
+      "tipo": "opcion_unica",
+      "opciones": [
+        "Presencial, necesitamos tenerle cerca",
+        "Remoto está bien, no hace falta que venga",
+        "Al principio presencial para entender el negocio, luego puede trabajar desde donde quiera",
+        "Flexible, lo que funcione mejor para los dos"
+      ],
+      "seguimiento": "¿En qué ciudad o zona horaria estáis?",
+      "genera": [
+        "perfil.habilidades_blandas.trabajo_remoto",
+        "entrevista.preguntas_comportamiento"
+      ],
+      "peso": 1,
+      "obligatoria": false
+    }
+
+  ],
+
+  "esquema_salida": {
+    "descripcion": "Estructura del JSON que genera este descubrimiento al completarse. Alimenta directamente el chatbot de entrevista al candidato.",
+    "perfil_candidato": {
+      "tipo_proyecto": "nuevo | mejora | extension",
+      "nivel_urgencia": "bajo | medio | alto | critico",
+      "conocimiento_dominio": [],
+      "habilidades": {
+        "herramientas_obligatorias": [],
+        "interfaz_usuario": [],
+        "gestion_datos": [],
+        "integraciones_externas": [],
+        "seguridad_datos": [],
+        "cumplimiento_legal": [],
+        "despliegue_y_pruebas": [],
+        "infraestructura": []
+      },
+      "habilidades_blandas": {
+        "autonomia": "baja | media | alta",
+        "liderazgo": false,
+        "comunicacion_no_tecnicos": false,
+        "trabajo_remoto": false,
+        "priorizacion": "baja | media | alta"
+      },
+      "senales_seniority": {
+        "autonomia_arquitectura": false,
+        "velocidad_entrega": "lenta | normal | rapida",
+        "pragmatismo_herramientas": "bajo | medio | alto",
+        "criterio_construir_vs_usar": false,
+        "puntos_descarte": []
+      },
+      "restricciones": {
+        "nivel_presupuesto": "bajo | medio | alto | sin_definir",
+        "rango_presupuesto_eur": "",
+        "cubre": "solo_desarrollo | desarrollo_e_infraestructura | proyecto_completo",
+        "plazo_meses": 0,
+        "motivo_plazo": ""
+      },
+      "criterios_exito": [],
+      "foco_entrevista": {
+        "preguntas_tecnicas": [],
+        "preguntas_comportamiento": [],
+        "preguntas_diseno_sistema": [],
+        "preguntas_seguridad": [],
+        "preguntas_situacionales": []
+      }
+    }
+  }
+}

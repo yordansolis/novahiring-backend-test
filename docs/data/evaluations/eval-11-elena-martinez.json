@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "11",
+    "nombre": "Elena Martínez García",
+    "ubicacion": "Valencia, España",
+    "email": "elena.martinez.dev@gmail.com",
+    "años_experiencia": 6
+  },
+
+  "knockout_check": {
+    "superado": true,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "PASA",
+        "evidencia": "Integró WhatsApp Business API (Meta) en MedAgenda Pro para recordatorios automáticos con reducción del 40% en ausencias. También migró de Twilio a la API oficial de Meta en Gestoría Digital."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "PASA",
+        "evidencia": "Implementó cifrado en reposo y tránsito para datos de salud. Redactó el RAT y política de privacidad. Certificación DPO nivel básico (AEPD Academy 2022). Validación legal externa documentada."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "PASA",
+        "evidencia": "Lideró proyectos desde diseño de arquitectura hasta despliegue en producción. MedAgenda Pro: SaaS completo desarrollado y desplegado de forma independiente."
+      }
+    ]
+  },
+
+  "scores": [
+    {
+      "dimension_id": "D1",
+      "dimension": "Integraciones técnicas obligatorias",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "Cubre las 4 integraciones requeridas: WhatsApp Business API (Meta) con reducción documentada de ausencias, Google Calendar API con actualizaciones bidireccionales en tiempo real, panel centralizado de recepción con drag & drop, y módulo de reserva online para pacientes. Experiencia directa y en producción en todas ellas.",
+      "evidencia": "MedAgenda Pro: panel de recepción con vista unificada, módulo reserva online, WhatsApp API, Google Calendar sincronización bidireccional. Gestoría: WhatsApp + cron jobs."
+    },
+    {
+      "dimension_id": "D2",
+      "dimension": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "Implementación técnica completa: cifrado en reposo y tránsito, documentación RAT, política de privacidad. Certificación DPO nivel básico. Validación legal externa por asesoría especializada en LOPDGDD. Es la única candidata con formación formal en protección de datos.",
+      "evidencia": "RAT redactado, política de privacidad, cifrado AES-256/HTTPS-TLS, certificación DPO AEPD 2022, validación legal de terceros documentada."
+    },
+    {
+      "dimension_id": "D3",
+      "dimension": "Autonomía y toma de decisiones técnicas",
+      "peso": 3,
+      "score": 5,
+      "justificacion": "6 años liderando proyectos desde la arquitectura hasta el despliegue. MedAgenda Pro es un SaaS completo con 15 consultorios activos, construido y operado de forma independiente. Reuniones semanales directamente con directores de clínicas (sin intermediario técnico).",
+      "evidencia": "SaaS de 15 consultorios desarrollado de forma autónoma. 99,8% uptime durante 18 meses. Gestión directa con clientes no técnicos."
+    },
+    {
+      "dimension_id": "D4",
+      "dimension": "Pragmatismo — criterio construir vs usar",
+      "peso": 3,
+      "score": 4,
+      "justificacion": "Usa consistentemente servicios de terceros (WhatsApp API, Google Calendar, SendGrid, Stripe, AWS managed services). Evidencia indirecta de pragmatismo. No hace mención explícita del criterio build vs buy en su descripción, pero su historial de integraciones demuestra preferencia por soluciones existentes.",
+      "evidencia": "Stack incluye servicios externos maduros (Meta API, Google, AWS managed). No hay mención explícita de criterio build vs buy."
+    },
+    {
+      "dimension_id": "D5",
+      "dimension": "Entrega en plazos ajustados",
+      "peso": 2,
+      "score": 3,
+      "justificacion": "Su CV no menciona plazos de entrega específicos ni situaciones de presión de tiempo. El sistema MedAgenda Pro tiene resultados sólidos (99,8% uptime, 60% reducción llamadas) pero el tiempo de desarrollo no está documentado. Para un proyecto de 3 meses con deadline fijo (antes de julio), este es el único punto sin evidencia directa.",
+      "evidencia": "Sin mención explícita de plazos. Logros son cualitativos (uptime, reducción), no de velocidad de entrega."
+    },
+    {
+      "dimension_id": "D6",
+      "dimension": "Comunicación con no técnicos",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "Menciona explícitamente reuniones semanales con directores de clínicas para reportar en lenguaje no técnico. Exactamente el perfil que la clínica Valencia necesita: Marcos Ferrer (Director de Operaciones, sin perfil técnico) quiere updates periódicos comprensibles.",
+      "evidencia": "Reuniones semanales documentadas con directores de clínica. Comunicación en lenguaje no técnico mencionada explícitamente."
+    },
+    {
+      "dimension_id": "D7",
+      "dimension": "Experiencia en sector salud",
+      "peso": 2,
+      "score": 5,
+      "justificacion": "MedAgenda Pro es exactamente el mismo tipo de sistema que necesita la Clínica Salud Valencia: SaaS de gestión de citas médicas para clínicas privadas en España, con 15 consultorios activos. No es experiencia genérica; es experiencia directa en el problema.",
+      "evidencia": "MedAgenda Pro: SaaS para clínicas privadas en España (15 consultorios). Panel de recepción, reserva online, WhatsApp, Google Calendar, LOPDGDD. Mismo stack de problema."
+    },
+    {
+      "dimension_id": "D8",
+      "dimension": "Stack e infraestructura adecuada al presupuesto",
+      "peso": 1,
+      "score": 4,
+      "justificacion": "AWS con EC2 + RDS PostgreSQL es sólido y fiable, aunque ligeramente más costoso que alternativas serverless (GCP Cloud Run). Para un presupuesto de 8.000-12.000€, el coste de infraestructura debe ser mínimo. AWS es gestionable pero no es la opción más económica del pool de candidatos.",
+      "evidencia": "AWS EC2 + RDS + S3. Sólido pero coste mayor que GCP Cloud Run o Railway."
+    }
+  ],
+
+  "calculo_score": {
+    "formula": "Σ(score × peso) / Σ(pesos)",
+    "detalle": "(5×3 + 5×3 + 5×3 + 4×3 + 3×2 + 5×2 + 5×2 + 4×1) / 19",
+    "numerador": 87,
+    "denominador": 19,
+    "score_final": 4.58,
+    "score_normalizado_100": 91.6
+  },
+
+  "resultado": "APTO",
+  "ranking_posicion": 3,
+
+  "fortalezas": [
+    "Única candidata con certificación formal en protección de datos (DPO nivel básico)",
+    "MedAgenda Pro es el sistema más similar al que necesita el cliente (mismo sector, mismo país, mismas integraciones)",
+    "Experiencia en reuniones semanales con directores de clínica en lenguaje no técnico",
+    "Stack probado en producción: 99,8% uptime durante 18 meses con 15 consultorios"
+  ],
+
+  "brechas": [
+    "No hay evidencia explícita de entrega bajo presión de plazos ajustados (3 meses con deadline fijo)",
+    "AWS es funcional pero más costoso que alternativas cloud-native (GCP Cloud Run, Railway) para el presupuesto del proyecto"
+  ],
+
+  "preguntas_pendientes_para_entrevista": [
+    "¿Has tenido que entregar un sistema funcional en menos de 3 meses? ¿Qué priorizaste y qué dejaste fuera?",
+    "Con un presupuesto de 8.000-12.000€, ¿usarías AWS o migrarías a una alternativa más económica para este proyecto?",
+    "¿Cómo gestionarías el cambio si el cliente te pide funcionalidades fuera del alcance acordado cuando llevas 6 semanas trabajando?"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "10",
+    "nombre": "Jhordan Andrés Asprilla Solis",
+    "ubicacion": "Medellín, Colombia",
+    "email": "yordansolis2@gmail.com",
+    "años_experiencia": 3
+  },
+
+  "knockout_check": {
+    "superado": false,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "PASA",
+        "evidencia": "Dulce Vida: integró WhatsApp Business API (Meta) con flujo automatizado vía n8n. Funnelchat: desarrolló webhooks en Python y Node.js para proveedores de WhatsApp. Experiencia directa documentada."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "DESCARTE",
+        "evidencia": "El CV no menciona RGPD, LOPDGDD, protección de datos sanitarios, ni cumplimiento legal en ninguno de sus proyectos. Toda su experiencia es en fintech (Trustanova — disputas, autenticación), chatbots de AI (Funnelchat), e inventarios (Dulce Vida). Ninguno de estos contextos implica datos de salud de categoría especial.",
+        "razon_descarte": "El cliente maneja datos de salud bajo categoría especial del RGPD/LOPDGDD. Un error en la implementación técnica de protección de datos puede implicar sanciones de hasta 20M€ o el 4% de la facturación global. Sin evidencia de conocimiento en este área, el riesgo legal para la clínica es inaceptable."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "RIESGO — requiere verificación",
+        "evidencia": "Evidencia mixta: Trustanova (equipo de empresa con roles definidos), Funnelchat (equipo con microservicios coordinados), Dulce Vida (parece trabajo individual). El perfil NO menciona explícitamente haber liderado proyectos en solitario desde arquitectura hasta producción para clientes sin perfil técnico."
+      }
+    ]
+  },
+
+  "descarte": {
+    "activado": true,
+    "knockout_id": "KO2",
+    "motivo": "Sin evidencia de comprensión de protección de datos sanitarios (RGPD/LOPDGDD)",
+    "justificacion": "La Clínica Salud Valencia maneja datos de salud (historial médico, diagnósticos, datos de pacientes) que están clasificados como categoría especial bajo el RGPD europeo y la LOPDGDD española. El candidato no menciona RGPD, LOPDGDD, protección de datos, ni cumplimiento legal en ningún proyecto de su CV. Para esta posición, la comprensión técnica de la protección de datos sanitarios es un requisito no negociable identificado durante el discovery (B4_P5, peso 3). El riesgo de contratar a alguien sin esta competencia no está justificado cuando hay candidatos que la demuestran con evidencia sólida."
+  },
+
+  "scores_informativos": {
+    "nota": "Scores calculados solo con fines informativos. El candidato está descartado por KO2.",
+    "scores": [
+      {
+        "dimension_id": "D1",
+        "score": 3,
+        "justificacion": "Tiene WhatsApp API (KO1 pasa). Sin evidencia de Google Calendar, panel de recepción médica, ni módulo de reserva online. Sus proyectos son chatbots de AI y sistemas de inventario, no sistemas de gestión de citas."
+      },
+      {
+        "dimension_id": "D2",
+        "score": 1,
+        "justificacion": "Sin ninguna mención de RGPD, LOPDGDD, protección de datos sanitarios. Motivo de descarte."
+      },
+      {
+        "dimension_id": "D3",
+        "score": 3,
+        "justificacion": "Evidencia mixta. Ha trabajado en equipos (Trustanova, Funnelchat) y posiblemente en solitario (Dulce Vida). No es claro que pueda operar con plena autonomía arquitectónica para un cliente no técnico."
+      },
+      {
+        "dimension_id": "D4",
+        "score": 4,
+        "justificacion": "Usa n8n para automatización (tool existente), APIs de terceros, múltiples servicios cloud. Demuestra pragmatismo técnico en la elección de herramientas."
+      },
+      {
+        "dimension_id": "D5",
+        "score": 3,
+        "justificacion": "Desarrolló MVP en Trustanova en corto tiempo. Sin evidencia de deadline fijo o entrega bajo presión de plazo externo."
+      },
+      {
+        "dimension_id": "D6",
+        "score": 2,
+        "justificacion": "Sin mención de comunicación con clientes no técnicos. Sus roles son técnicos en empresas con estructura interna."
+      },
+      {
+        "dimension_id": "D7",
+        "score": 1,
+        "justificacion": "Sin experiencia en el sector salud. Fintech (disputas), chatbots (Funnelchat), inventarios (Dulce Vida), municipalidad (Quibdó). Ninguno es sector salud."
+      },
+      {
+        "dimension_id": "D8",
+        "score": 4,
+        "justificacion": "AWS Lambda, Railway, Docker, FastAPI, Redis. Stack moderno y coste-eficiente para el volumen."
+      }
+    ],
+    "score_hipotetico": {
+      "detalle": "(3×3 + 1×3 + 3×3 + 4×3 + 3×2 + 2×2 + 1×2 + 4×1) / 19",
+      "numerador": 54,
+      "denominador": 19,
+      "score_final": 2.84,
+      "nota": "Score hipotético sin el KO2. No relevante para la decisión final."
+    }
+  },
+
+  "resultado": "DESCARTADO",
+  "razon_descarte_resumida": "KO2 — Sin evidencia de comprensión de RGPD/LOPDGDD para datos sanitarios",
+
+  "nota_para_el_reclutador": "Jhordan tiene potencial técnico interesante (WhatsApp API, microservicios, FastAPI, cloud). Podría ser un candidato válido para proyectos sin datos sanitarios. Para este cliente específico (clínica con datos de salud), el riesgo es inaceptable sin evidencia de esta competencia. Si hubiera una instancia de entrevista, la primera pregunta sería verificar si tiene conocimiento RGPD/LOPDGDD no documentado en el CV. Sin embargo, en CV screening, no supera el knockout."
+}

@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "discovery_ref": "discovery-clinica-salud-valencia.json",
+    "evaluado_por": "NovaHiring CV Evaluator",
+    "fecha": "2026-05-20",
+    "metodo": "cv_screening"
+  },
+
+  "candidato": {
+    "id": "14",
+    "nombre": "Miguel Torres Sánchez",
+    "ubicacion": "Sevilla, España",
+    "email": "migueltorres.dev@outlook.com",
+    "años_experiencia": 5
+  },
+
+  "knockout_check": {
+    "superado": false,
+    "resultados": [
+      {
+        "id": "KO1",
+        "descripcion": "Experiencia con WhatsApp Business API",
+        "resultado": "DESCARTE",
+        "evidencia": "El CV no menciona WhatsApp Business API ni ninguna integración de mensajería. Solo menciona notificaciones por email usando SendGrid y consumo de APIs de terceros 'siguiendo documentación técnica facilitada por el equipo de arquitectura'. No hay experiencia autónoma con WhatsApp API.",
+        "razon_descarte": "WhatsApp es la única herramienta de notificaciones que el cliente acepta. Sin esta integración, el sistema no cumple el requisito más importante para los pacientes. El candidato no tiene evidencia de esta competencia."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "Comprensión RGPD/LOPDGDD datos sanitarios",
+        "resultado": "DESCARTE",
+        "evidencia": "El CV no menciona RGPD, LOPDGDD, protección de datos, ni cumplimiento legal. Toda su experiencia es en logística (Logistix) y retail (Retailsoft), sectores sin datos sanitarios.",
+        "razon_descarte": "Sin evidencia de conocimiento en protección de datos sanitarios. El cliente maneja datos de salud bajo categoría especial."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Autonomía sin supervisión técnica",
+        "resultado": "DESCARTE",
+        "evidencia": "Múltiples evidencias explícitas de dependencia de supervisión técnica: 'Consumí APIs de terceros siguiendo documentación técnica facilitada por el equipo de arquitectura', 'Colaboré con el arquitecto del equipo para implementar los patrones de diseño definidos en el sistema', 'Me especializo en equipos organizados con metodología ágil y roles bien definidos'. El perfil del candidato describe explícitamente que prefiere entornos con roles definidos y supervisión.",
+        "razon_descarte": "La clínica no tiene perfil técnico interno. El candidato explicita que prefiere equipos organizados con roles definidos y necesita arquitecto que defina los patrones. Incompatible con el contexto del cliente."
+      }
+    ]
+  },
+
+  "descarte": {
+    "activado": true,
+    "knockout_id": "KO1, KO2, KO3",
+    "motivo": "Triple descarte: sin WhatsApp API, sin RGPD sanitario, sin autonomía técnica",
+    "justificacion": "Miguel Torres falla los tres criterios de descarte del perfil simultáneamente. Su perfil es el de un desarrollador de producto en equipo organizado: React, componentes, tests, sprints. Es un perfil valioso para otro contexto (startup de producto con equipo técnico maduro), pero es el más incompatible con lo que la Clínica Salud Valencia necesita: alguien que trabaje solo, con cliente no técnico, con integraciones específicas y con conocimiento de cumplimiento legal sanitario."
+  },
+
+  "resultado": "DESCARTADO",
+  "razon_descarte_resumida": "KO1 + KO2 + KO3 — Sin WhatsApp API, sin RGPD/LOPDGDD, sin capacidad de autonomía técnica",
+
+  "nota_para_el_reclutador": "Miguel es un perfil válido para una empresa de producto con equipo de ingeniería maduro: frontend React de calidad, testing (72% cobertura), Scrum. Para este cliente específico, no tiene ni las integraciones técnicas requeridas, ni el conocimiento legal, ni la autonomía de trabajo. No recomendar para esta posición."
+}

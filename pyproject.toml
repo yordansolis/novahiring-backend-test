@@ -1,0 +1,28 @@
+[project]
+name = "test-nova-hiring"
+version = "0.1.0"
+description = "NovaHiring — AI-assisted hiring platform"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "alembic>=1.18.4",
+    "anthropic>=0.103.1",
+    "asyncpg>=0.31.0",
+    "fastapi[standard]>=0.136.1",
+    "httpx>=0.28.1",
+    "matplotlib>=3.10.9",
+    "openai>=2.37.0",
+    "pydantic-settings>=2.14.1",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.3.0",
+    "redis[asyncio]>=5.0",
+    "sqlalchemy[asyncio]>=2.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.uv]
+dev-dependencies = []

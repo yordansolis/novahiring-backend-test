@@ -1,0 +1,237 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "generado_por": "NovaHiring Discovery Engine",
+    "plantilla_usada": "discovery_dataset.json — niche: clinica_medica",
+    "fecha_simulacion": "2026-05-20",
+    "estado": "completado"
+  },
+
+  "cliente": {
+    "nombre": "Clínica Salud Valencia S.L.",
+    "contacto": "Marcos Ferrer",
+    "rol_contacto": "Director de Operaciones",
+    "ubicacion": "Valencia, España",
+    "sector": "Salud — Clínica privada multiespecialidad"
+  },
+
+  "problema_negocio": {
+    "descripcion": "Todo pasa por una sola recepcionista (Lucía). Las llamadas de pacientes se pierden cuando está ocupada. Cada médico lleva su agenda por separado (papel y ordenador). No hay visión centralizada de la clínica.",
+    "impacto_economico": "15-20 citas perdidas por semana × 60€ = ~1.000€/semana (~4.000€/mes en ingresos perdidos)",
+    "riesgo_si_no_se_resuelve": "La recepcionista amenaza con marcharse. Imposibilidad de abrir la consulta de fisioterapia planificada.",
+    "metrica_objetivo": "Reducir llamadas entrantes y citas perdidas; permitir a Lucía gestionar todo desde una sola pantalla"
+  },
+
+  "producto_a_construir": {
+    "tipo_proyecto": "construccion_desde_cero",
+    "sistema_actual": "Perfil en Doctoralia (solo visibilidad, no se usa para gestión interna). Sin sistema propio.",
+    "funcionalidades_criticas": [
+      "panel_gestion_recepcion",
+      "reserva_citas_online_para_pacientes",
+      "avisos_automaticos_whatsapp"
+    ],
+    "funcionalidad_mas_critica": "panel_gestion_recepcion",
+    "nota_critica": "Si Lucía no puede ver y mover las citas desde una sola pantalla, lo demás no sirve de nada.",
+    "integraciones_requeridas": [
+      "whatsapp_business_api",
+      "google_calendar"
+    ],
+    "nota_integraciones": "Dos de los tres médicos usan Google Calendar. Notificaciones EXCLUSIVAMENTE por WhatsApp (el email no lo mira nadie).",
+    "volumen_usuarios": {
+      "medicos": 3,
+      "recepcion": 1,
+      "pacientes_diarios": "40-50",
+      "proyeccion_12_meses": "Posible apertura fisioterapia — duplicar volumen"
+    }
+  },
+
+  "contexto_equipo": {
+    "perfil_tecnico_interno": false,
+    "descripcion": "Solo médicos y recepcionista. El sobrino del director estudia informática (2º año — no apto para supervisión).",
+    "decision_tecnica": "El desarrollador decide todo de forma autónoma.",
+    "supervision_esperada": "El cliente pide updates periódicos en lenguaje no técnico. No puede revisar decisiones técnicas.",
+    "seguimiento": "Comunicación periódica del avance. No desaparecer 2 meses."
+  },
+
+  "restricciones": {
+    "plazo_maximo_meses": 3,
+    "motivo_plazo": "Temporada alta verano (julio-agosto). Si no está listo en junio, se pierde otra temporada.",
+    "presupuesto_eur": "8000-12000",
+    "cubre": "solo_desarrollo",
+    "herramientas_externas_permitidas": true,
+    "nota_herramientas": "Abiertos a usar soluciones ya hechas si funcionan bien y son fáciles de mantener.",
+    "stack_obligatorio": [],
+    "compliance": {
+      "rgpd": true,
+      "lopdgdd": true,
+      "nota": "Datos de salud (categoría especial bajo RGPD/LOPDGDD). El abogado del cliente puede validar la parte legal una vez construido."
+    },
+    "modalidad_trabajo": "hibrido",
+    "nota_modalidad": "Al principio presencial en Valencia para entender el negocio. Luego remoto. Acepta candidatos de fuera de Valencia."
+  },
+
+  "perfil_candidato": {
+    "habilidades_tecnicas": {
+      "obligatorias": [
+        "panel_gestion_para_recepcion",
+        "reserva_de_citas_online",
+        "integracion_whatsapp_business_api",
+        "sincronizacion_google_calendar",
+        "proteccion_datos_sanitarios_rgpd_lopdgdd"
+      ],
+      "deseables": [
+        "experiencia_con_herramientas_de_automatizacion",
+        "infraestructura_cloud_de_bajo_coste"
+      ]
+    },
+    "habilidades_blandas": {
+      "autonomia": "alta",
+      "comunicacion_con_no_tecnicos": true,
+      "trabajo_hibrido": true,
+      "capacidad_de_priorizacion": "alta"
+    },
+    "senales_de_seniority": {
+      "toma_decisiones_arquitectura_en_solitario": true,
+      "criterio_construir_vs_usar_herramientas": true,
+      "entrega_en_plazos_ajustados": true
+    },
+    "criterios_de_descarte": [
+      {
+        "id": "KO1",
+        "descripcion": "No tiene experiencia con WhatsApp Business API (Meta) para notificaciones",
+        "razon": "Es la integración más crítica del sistema. El cliente no aceptará otra solución de mensajería."
+      },
+      {
+        "id": "KO2",
+        "descripcion": "No demuestra comprensión de protección de datos sanitarios (RGPD/LOPDGDD)",
+        "razon": "Los datos de salud son categoría especial. Un error aquí implica responsabilidad legal para la clínica."
+      },
+      {
+        "id": "KO3",
+        "descripcion": "Solo puede trabajar con supervisión técnica externa",
+        "razon": "La clínica no tiene perfil técnico. El candidato debe tomar todas las decisiones arquitectónicas solo."
+      }
+    ]
+  },
+
+  "scorecard": {
+    "descripcion": "Dimensiones de evaluación con pesos derivados del discovery_dataset.json",
+    "nota": "Escala 1-5 por dimensión. Score final = Σ(score × peso) / Σ(pesos)",
+    "peso_total": 19,
+    "dimensiones": [
+      {
+        "id": "D1",
+        "nombre": "Integraciones técnicas obligatorias",
+        "descripcion": "WhatsApp Business API, Google Calendar, panel de recepción, reserva online",
+        "peso": 3,
+        "rubricas": {
+          "5": "Tiene experiencia documentada con TODAS las integraciones requeridas",
+          "4": "Tiene 3 de 4 integraciones, la faltante es fácilmente aprendible",
+          "3": "Tiene las más críticas (WhatsApp) pero le faltan otras",
+          "2": "Solo tiene una de las integraciones requeridas",
+          "1": "No tiene experiencia con ninguna integración requerida"
+        }
+      },
+      {
+        "id": "D2",
+        "nombre": "Cumplimiento RGPD/LOPDGDD datos sanitarios",
+        "descripcion": "Cifrado, consentimientos, retención, RAT, AIPD, validación legal",
+        "peso": 3,
+        "rubricas": {
+          "5": "Experiencia completa: cifrado AES-256/TLS, RAT, AIPD, validación legal documentada",
+          "4": "Maneja los requisitos técnicos clave (cifrado, consentimiento, retención), validación legal parcial",
+          "3": "Menciona RGPD pero sin evidencia de implementación técnica específica en salud",
+          "2": "Conocimiento genérico de RGPD, sin aplicación a datos sanitarios",
+          "1": "No menciona RGPD ni protección de datos sanitarios"
+        }
+      },
+      {
+        "id": "D3",
+        "nombre": "Autonomía y toma de decisiones técnicas",
+        "descripcion": "Capacidad de diseñar arquitectura y tomar decisiones sin supervisión técnica",
+        "peso": 3,
+        "rubricas": {
+          "5": "Ha liderado proyectos completos en solitario, desde arquitectura hasta producción",
+          "4": "Ha tomado decisiones técnicas importantes con supervisión mínima",
+          "3": "Ha trabajado tanto en solitario como en equipo, evidencia mixta",
+          "2": "Ha trabajado principalmente en equipos con supervisión técnica",
+          "1": "Solo ha ejecutado tareas definidas por otros técnicos"
+        }
+      },
+      {
+        "id": "D4",
+        "nombre": "Pragmatismo — criterio construir vs usar herramientas",
+        "descripcion": "Capacidad de decidir cuándo usar soluciones existentes y cuándo construir desde cero",
+        "peso": 3,
+        "rubricas": {
+          "5": "Demuestra explícitamente uso de herramientas existentes para ahorrar tiempo con criterio documentado",
+          "4": "Usa servicios de terceros estratégicamente; evidencia indirecta de pragmatismo",
+          "3": "Usa algunos servicios pero tendencia a construir todo desde cero",
+          "2": "Preferencia clara por construir todo propio sin justificación",
+          "1": "Sin evidencia de criterio build vs buy"
+        }
+      },
+      {
+        "id": "D5",
+        "nombre": "Entrega en plazos ajustados",
+        "descripcion": "Historial de entrega de proyectos funcionales en 3 meses o menos",
+        "peso": 2,
+        "rubricas": {
+          "5": "Historial documentado de entrega en plazos cortos (6-12 semanas) con resultados en producción",
+          "4": "Evidencia de entregas en plazo con proyectos complejos",
+          "3": "Proyectos entregados pero sin mención específica de plazos ajustados",
+          "2": "Sin evidencia clara de velocidad de entrega",
+          "1": "Evidencia de proyectos sin fecha o muy largos"
+        }
+      },
+      {
+        "id": "D6",
+        "nombre": "Comunicación con perfiles no técnicos",
+        "descripcion": "Capacidad de explicar decisiones técnicas a clientes sin formación tecnológica",
+        "peso": 2,
+        "rubricas": {
+          "5": "Reuniones periódicas documentadas con directivos/clientes no técnicos, lenguaje adaptado",
+          "4": "Menciona comunicación con clientes no técnicos con ejemplos concretos",
+          "3": "Experiencia con clientes, sin énfasis específico en perfiles no técnicos",
+          "2": "Solo comunicación interna dentro de equipos técnicos",
+          "1": "Sin evidencia de comunicación con perfiles no técnicos"
+        }
+      },
+      {
+        "id": "D7",
+        "nombre": "Experiencia en sector salud o dominio similar",
+        "descripcion": "Comprensión del contexto de clínicas, gestión de citas, datos de pacientes",
+        "peso": 2,
+        "rubricas": {
+          "5": "Proyectos en producción específicamente en clínicas/centros de salud en España",
+          "4": "Proyectos en salud y/o gestión de reservas en otros sectores de servicios",
+          "3": "Proyectos de gestión similares (reservas, citas) en otros sectores",
+          "2": "Proyectos genéricos sin experiencia en salud o reservas",
+          "1": "Sin experiencia relevante en el dominio"
+        }
+      },
+      {
+        "id": "D8",
+        "nombre": "Stack e infraestructura adecuada al presupuesto",
+        "descripcion": "Uso de tecnologías que permiten entrega rápida y coste de infraestructura bajo",
+        "peso": 1,
+        "rubricas": {
+          "5": "Stack moderno y coste-eficiente; infraestructura serverless o PaaS económico documentado",
+          "4": "Stack sólido con coste razonable (AWS, DigitalOcean)",
+          "3": "Stack funcional pero posiblemente costoso o de aprendizaje lento",
+          "2": "Stack con desajuste para el proyecto (ej. enterprise, demasiado pesado)",
+          "1": "Stack incompatible o ineficiente para el contexto"
+        }
+      }
+    ]
+  },
+
+  "criterios_de_exito": [
+    "Panel de recepción operativo antes de julio de 2026",
+    "Pacientes pueden reservar cita sin llamar por teléfono",
+    "Avisos automáticos por WhatsApp activos y configurados",
+    "Lucía gestiona todo desde una sola pantalla",
+    "Datos de pacientes protegidos conforme a RGPD/LOPDGDD",
+    "Validación legal del tratamiento de datos por el abogado del cliente"
+  ]
+}
