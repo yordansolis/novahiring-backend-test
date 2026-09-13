@@ -8,6 +8,7 @@ dependencies = [
     "alembic>=1.18.4",
     "anthropic>=0.103.1",
     "asyncpg>=0.31.0",
+    "bcrypt>=5.0.0",
     "fastapi[standard]>=0.136.1",
     "httpx>=0.28.1",
     "matplotlib>=3.10.9",

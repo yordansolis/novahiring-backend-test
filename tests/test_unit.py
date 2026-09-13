@@ -4,6 +4,7 @@ import pytest
 
 from contracts import CandidateProfile, DimensionScore, KOScreenResult
 from services.ko_checker import KOChecker
+from services.profile import ProfileBuilder
 from services.scorer import Scorer
 
 # ── Scorer ────────────────────────────────────────────────────────────────────
@@ -112,3 +113,32 @@ def test_jhordan_fails_ko2():
     passed, failing = KOChecker().apply(profile)
     assert passed is False
     assert failing == "KO2"
+
+
+# ── ProfileBuilder KO keyword heuristic ───────────────────────────────────────
+
+@pytest.mark.parametrize(
+    "phrase",
+    [
+        "autonomía",                 # noun
+        "de forma autónoma",         # adjective — regression: Elena Martínez was rejected
+        "de manera autónoma",
+        "sin supervisión",
+        "en solitario",
+        "de forma independiente",
+    ],
+)
+def test_ko3_accepts_autonomy_phrasings(discovery_fixture, phrase):
+    """KO3 is evidence-of-autonomy; it must not hinge on one grammatical form."""
+    cv = f"Ingeniera con 6 años construyendo sistemas web completos {phrase}."
+    profile = ProfileBuilder().build("c", "j", cv, discovery_fixture)
+    ko3 = next(r for r in profile.ko_screen_results if r.ko_id == "KO3")
+    assert ko3.passed, f"KO3 should pass for phrasing {phrase!r}"
+
+
+def test_ko3_ignores_freelancer_sense_of_autonomo(discovery_fixture):
+    """'autónomos' meaning self-employed clients is not evidence of working unsupervised."""
+    cv = "Construí sitios web a medida para pequeñas empresas y autónomos en Valencia."
+    profile = ProfileBuilder().build("c", "j", cv, discovery_fixture)
+    ko3 = next(r for r in profile.ko_screen_results if r.ko_id == "KO3")
+    assert not ko3.passed

@@ -64,6 +64,9 @@ class CVEvaluator:
                     apto_ids.append(candidate.id)
             except Exception:
                 logger.exception("Error evaluating candidate %s", candidate.id)
+                # Clear the failed transaction, otherwise every remaining
+                # candidate dies with PendingRollbackError.
+                await self._db.rollback()
 
         return apto_ids
 
@@ -111,6 +114,11 @@ class CVEvaluator:
             ko_results=ko_results_raw,
         )
         self._db.add(evaluation)
+        # Flush the parent before adding children: the models declare ForeignKey
+        # columns but no relationship(), so the unit of work has no dependency
+        # edge and would otherwise emit dimension_scores first (FK violation).
+        # Same two-step pattern as interview_conductor._persist_evaluation.
+        await self._db.flush()
 
         for dim_score in dimension_scores:
             self._db.add(DimensionScoreRecord(
