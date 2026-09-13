@@ -12,10 +12,25 @@ class Settings(BaseSettings):
     API_KEY_ADMIN: str = ""
     API_KEY_CANDIDATES: str = ""
 
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:8000"]
+    ALLOWED_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ]
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
 
+    FRONTEND_URL: str = "http://localhost:3000"
+
+    SMTP_HOST: str = "smtp-relay.brevo.com"
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = ""
+    SMTP_FROM_NAME: str = "NovaHiring"
+
+    MAX_CANDIDATES_PER_JOB: int = 3
     SESSION_TTL_SECONDS: int = 604800  # 7 days
     PROCESSING_LOCK_TTL: int = 30
     MAX_SESSION_MESSAGES: int = 50

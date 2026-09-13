@@ -3,7 +3,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Annotated, TypedDict
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 
 class DialogueTurn(TypedDict):
@@ -216,7 +216,73 @@ class EvaluationTriggerResponse(BaseModel):
     status: str       # "evaluation_started"
 
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+
+
+class CreateJobRequest(BaseModel):
+    title: str = Field(min_length=2, max_length=255)
+    niche: str = Field(min_length=2, max_length=100)
+    tenant_id: str | None = None
+    offer_text: str | None = None
+
+
+class JobListItem(BaseModel):
+    job_id: str
+    title: str
+    niche: str
+    status: str
+    tenant_id: str
+    candidate_count: int = 0
+    max_candidates: int = 3
+
+
+class JobApplyInfo(BaseModel):
+    job_id: str
+    title: str
+    status: str
+    applications_open: bool
+    candidate_count: int
+    max_candidates: int
+
+
+class UserPublic(BaseModel):
+    id: str
+    email: str
+    nombre: str
+    rol: str
+    tenant_id: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    user: UserPublic
+
+
+class RecruiterClaims(BaseModel):
+    user_id: str
+    email: str
+    nombre: str
+    rol: str
+    tenant_id: str
+
+
 class CandidateTokenClaims(BaseModel):
+    candidate_id: str
+    job_id: str
+
+
+class CandidateLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class CandidateLoginResponse(BaseModel):
+    token: str
+    token_type: str = "bearer"
     candidate_id: str
     job_id: str
 
@@ -228,3 +294,115 @@ class CandidateListItem(BaseModel):
     passed_ko: bool | None
     resultado: str | None       # "APTO" | "DESCARTADO" | None si no evaluado
     weighted_score: str | None
+    login_username: str | None = None
+    login_password: str | None = None
+
+
+class CvAuditItem(BaseModel):
+    rank: int
+    candidate_id: str
+    nombre: str
+    email: str | None
+    passed_ko: bool
+    resultado: str | None
+    weighted_score: str | None
+    first_failing_ko: str | None
+    cv_text: str
+
+
+class JobAuditCandidate(BaseModel):
+    candidate_id: str
+    nombre: str
+    email: str | None
+    passed_ko: bool
+    interview_status: str
+    interview_score: str | None
+    rank: int | None
+    account_activated: bool
+    invitation_sent: bool
+    invitation_email_status: str | None = None  # sent | failed | not_configured | simulated_sent
+    notifications_sent: list[str]
+    is_winner: bool
+    session_id: str | None
+
+
+class JobAuditResponse(BaseModel):
+    job_id: str
+    title: str
+    status: str
+    interview_deadline: str | None
+    deadline_passed: bool
+    closed_at: str | None
+    winner_candidate_id: str | None
+    winner_nombre: str | None
+    ready_to_close: bool
+    total_apto: int
+    total_completed_interviews: int
+    all_candidates: list[JobAuditCandidate]
+
+
+class CloseJobResponse(BaseModel):
+    job_id: str
+    status: str = "closed"
+    winner_candidate_id: str | None
+    winner_nombre: str | None
+    winner_score: str | None
+    sessions_expired: int
+    notifications_sent: int
+
+
+class JobMetricsCandidate(BaseModel):
+    nombre: str
+    interview_status: str
+    dimensions_answered: int
+    dimensions_locked: list[str]
+    current_dimension: str | None
+    final_score: str | None
+
+
+class JobMetricsFunnelStep(BaseModel):
+    dimension_id: str
+    reached_count: int
+    completed_count: int
+
+
+class JobMetricsResponse(BaseModel):
+    candidates: list[JobMetricsCandidate]
+    funnel: list[JobMetricsFunnelStep]
+    completion_rate: str
+
+
+class EmailHealthResponse(BaseModel):
+    status: str
+    host: str
+    port: int
+    error: str | None
+
+
+class EmailNotificationItem(BaseModel):
+    notification_id: str
+    candidate_name: str
+    candidate_email: str | None
+    notification_type: str
+    delivery_status: str
+    delivery_error: str | None
+    sent_at: str
+    delivered_at: str | None
+
+
+class JobNotificationsResponse(BaseModel):
+    job_id: str
+    total: int
+    sent: int
+    queued: int
+    failed: int
+    notifications: list[EmailNotificationItem]
+
+
+class SendInvitationsResponse(BaseModel):
+    job_id: str
+    attempted: int
+    sent: int
+    failed: int
+    smtp_configured: bool
+    error: str | None = None

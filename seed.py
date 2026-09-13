@@ -17,8 +17,10 @@ Verification targets:
 
 import asyncio
 import hashlib
+import os
 import json
 import re
+import secrets
 import sys
 from decimal import Decimal
 from pathlib import Path
@@ -32,6 +34,7 @@ from models.candidate import Candidate
 from models.evaluation import DimensionScoreRecord, Evaluation
 from models.job import JobOpening
 from models.ops import AICallLog, ChatSession, Message, PromptVersion, Question
+from models.user import User
 
 DOCS = Path(__file__).parent / "docs"
 TENANT_ID = "clinica-salud-valencia"
@@ -484,6 +487,19 @@ INTERVIEW_EVALUATOR_PROVIDERS = {
     },
 }
 
+CV_EVALUATOR_PROVIDERS = {
+    "openai": {
+        "model": "gpt-4o-mini",
+        "max_tokens": 1024,
+        "temperature": 0.0,
+    },
+    "anthropic": {
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 1024,
+        "temperature": 0.0,
+    },
+}
+
 INTERVIEW_DIALOGUE_CONDUCTOR_PROVIDERS = {
     "openai": {
         "model": "gpt-4o-mini",
@@ -584,6 +600,43 @@ async def switch_interview_provider(provider: str) -> None:
             )
 
     print(f"  Ambos prompts de entrevista ahora usan {provider}. Sin reiniciar el servidor.")
+
+
+async def switch_cv_evaluator_provider(provider: str) -> None:
+    """Flip cv_dimension_evaluator to another provider, preserving its current system_prompt."""
+    if provider not in CV_EVALUATOR_PROVIDERS:
+        print(f"  \u2717 Proveedor desconocido: '{provider}'. Usa 'openai' o 'anthropic'.")
+        return
+
+    cfg = CV_EVALUATOR_PROVIDERS[provider]
+    async with async_session_factory() as session:
+        async with session.begin():
+            result = await session.execute(
+                select(PromptVersion).where(
+                    PromptVersion.name == "cv_dimension_evaluator",
+                    PromptVersion.is_active.is_(True),
+                )
+            )
+            current = result.scalar_one_or_none()
+            if current is None:
+                print("  \u2717 No hay cv_dimension_evaluator activo. Corre 'seed.py prompts' primero.")
+                return
+            if current.provider == provider:
+                print(f"  Ya est\u00e1 en '{provider}': cv_dimension_evaluator ({current.model})")
+                return
+            current.is_active = False
+            print(f"  \u2713 Desactivado: cv_dimension_evaluator {current.provider}/{current.model}")
+            session.add(PromptVersion(
+                name="cv_dimension_evaluator",
+                provider=provider,
+                version=current.version + 1,
+                model=cfg["model"],
+                max_tokens=cfg["max_tokens"],
+                temperature=cfg["temperature"],
+                description=f"Evaluates a candidate CV against a scorecard dimension rubric. Provider: {provider}.",
+                system_prompt=current.system_prompt,   # keep the placeholder-bearing text
+            ))
+            print(f"  \u2713 Activado:   cv_dimension_evaluator {provider}/{cfg['model']}")
 
 
 async def update_dialogue_conductor() -> None:
@@ -697,6 +750,55 @@ async def update_cv_evaluator_prompt() -> None:
     print("  Prompts actualizados. Sin reiniciar el servidor.")
 
 
+# ── Recruiter seeding ─────────────────────────────────────────────────────────
+
+DEFAULT_RECRUITER_EMAIL = "recruiter@clinicasaludvalencia.es"
+DEFAULT_RECRUITER_NAME = "Marta Ruiz — Recursos Humanos"
+
+
+async def seed_recruiter(email: str | None = None, password: str | None = None) -> None:
+    """Create (or reset the password of) the recruiter account.
+
+    Password precedence: CLI arg > SEED_RECRUITER_PASSWORD env var > generated.
+    A generated password is printed once and never stored in plain text.
+    """
+    from services.auth_service import hash_password
+
+    email = (email or DEFAULT_RECRUITER_EMAIL).strip().lower()
+    generated = False
+    if not password:
+        password = os.environ.get("SEED_RECRUITER_PASSWORD")
+    if not password:
+        password = secrets.token_urlsafe(12)
+        generated = True
+
+    async with async_session_factory() as session:
+        async with session.begin():
+            existing = (await session.execute(
+                select(User).where(User.email == email)
+            )).scalar_one_or_none()
+            if existing:
+                existing.password_hash = hash_password(password)
+                existing.is_active = True
+                action = "Contraseña restablecida"
+            else:
+                session.add(User(
+                    tenant_id=TENANT_ID,
+                    email=email,
+                    password_hash=hash_password(password),
+                    nombre=DEFAULT_RECRUITER_NAME,
+                    rol="recruiter",
+                    is_active=True,
+                ))
+                action = "Reclutador creado"
+
+    print(f"  \u2713 {action}: {email}")
+    if generated:
+        print(f"    Contraseña (se muestra una sola vez): {password}")
+    else:
+        print("    Contraseña: la que indicaste.")
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 async def main() -> None:
@@ -707,12 +809,19 @@ async def main() -> None:
         await seed_prompts()
     if mode == "use-openai":
         await switch_interview_provider("openai")
+        await switch_cv_evaluator_provider("openai")
     if mode == "use-anthropic":
         await switch_interview_provider("anthropic")
+        await switch_cv_evaluator_provider("anthropic")
     if mode == "update-dialogue":
         await update_dialogue_conductor()
     if mode == "update-cv-evaluator":
         await update_cv_evaluator_prompt()
+    if mode in ("all", "recruiter"):
+        await seed_recruiter(
+            email=sys.argv[2] if len(sys.argv) > 2 else None,
+            password=sys.argv[3] if len(sys.argv) > 3 else None,
+        )
     await engine.dispose()
 
 

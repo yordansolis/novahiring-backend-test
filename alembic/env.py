@@ -14,6 +14,7 @@ import models.candidate    # noqa: F401
 import models.evaluation   # noqa: F401
 import models.job          # noqa: F401
 import models.ops          # noqa: F401
+import models.user         # noqa: F401
 
 config = context.config
 if config.config_file_name:

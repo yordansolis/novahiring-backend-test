@@ -29,6 +29,10 @@ uv run alembic upgrade head
 # Seed reference case + prompt versions into DB (run after migrations)
 uv run python seed.py
 
+# Create/reset the recruiter login (password: arg > SEED_RECRUITER_PASSWORD env > generated once)
+uv run python seed.py recruiter
+SEED_RECRUITER_PASSWORD='...' uv run python seed.py recruiter
+
 # Seed only reference case
 uv run python seed.py case
 
@@ -66,6 +70,13 @@ uv run pytest tests/test_dialogue_manager_unit.py -v
 # Run acceptance tests (requires seeded DB)
 uv run pytest tests/test_acceptance.py -v
 
+# Run a single test / a single test class
+uv run pytest tests/test_unit.py::test_scorer_sofia -v
+uv run pytest tests/test_dialogue_manager_unit.py -k "intent" -v
+
+# Delete session data without touching seeded reference rows
+uv run python clean_sessions.py
+
 # Generate a new Alembic migration
 uv run alembic revision --autogenerate -m "description"
 
@@ -78,8 +89,8 @@ Python 3.11 (CPython 3.11.14), managed via `uv`. Virtualenv at `.venv/`.
 ## Environment variables (`.env`)
 
 ```
-DATABASE_URL=postgresql+asyncpg://nova:nova_dev@localhost:5432/nova_hiring
-REDIS_URL=redis://localhost:6379
+DATABASE_URL=postgresql+asyncpg://nova:nova_dev@localhost:5433/nova_hiring
+REDIS_URL=redis://localhost:6380
 ANTHROPIC_API_KEY=sk-ant-...
 OPENAI_API_KEY=sk-...
 API_KEY_ADMIN=<openssl rand -hex 32>        # recruiters / admin tools — required in prod
@@ -88,7 +99,17 @@ DEBUG=true
 LOG_LEVEL=INFO
 ```
 
-> **Auth:** Three levels — public (no header), admin (`X-API-Key: {API_KEY_ADMIN}`), candidate token (`Authorization: Bearer {token}`). Both keys empty → admin/candidate auth bypassed (dev/test).
+> **Host ports are 5433/6380, not the defaults.** The containers map `5433:5432` and `6380:6379`
+> because `~/.ssh/config` forwards 5432/6379 to the `dev-nova` droplet; an ssh bind on
+> `127.0.0.1` shadows Docker's wildcard bind, so `localhost:5432` silently reaches the remote
+> host (Postgres rejects the `nova` user; Redis has no auth and would accept the writes).
+>
+> **Auth:** Four levels — public (no header), recruiter login (`Authorization: Bearer {access_token}`
+> from `POST /api/v1/auth/login`), admin shared key (`X-API-Key: {API_KEY_ADMIN}`), candidate token
+> (`Authorization: Bearer {token}`). Both keys empty → admin/candidate auth bypassed (dev/test).
+>
+> Recruiter and candidate Bearer tokens live in different Redis namespaces
+> (`recruiter_token:` vs `candidate_token:`), so one is never accepted where the other belongs.
 > Generate keys: `openssl rand -hex 32`
 
 ## Project status
@@ -224,9 +245,13 @@ nova-hiring/
 ├── config.py              ← Pydantic Settings (from .env)
 ├── database.py            ← Async SQLAlchemy (NullPool) + Redis singleton
 ├── contracts.py           ← All Pydantic v2 data contracts in one file
-├── seed.py                ← Seed reference case + prompt versions
+├── seed.py                ← Seed reference case + prompt versions (subcommands: case, prompts,
+│                            update-cv-evaluator, update-dialogue, use-openai, use-anthropic)
+├── clean_sessions.py      ← Wipes sessions/messages/ai_call_logs + UUID-id evaluations;
+│                            keeps rows whose id starts with 'eval-' (seeded reference data)
 ├── api/
 │   ├── auth.py            ← require_admin / require_interview_access (Bearer or X-API-Key)
+│   │                         + POST /login, GET /me, POST /logout  [recruiter]
 │   ├── jobs.py            ← GET /offer, /profile, /ranking, /report  [admin]
 │   ├── candidates.py      ← POST /upload [public], GET /{job_id}, POST /{job_id}/evaluate [admin]
 │   └── interviews.py      ← POST /sessions, /message, GET /sessions/{id}, /interrupt
@@ -236,8 +261,9 @@ nova-hiring/
 │   ├── job.py             ← job_openings (discovery_json JSONB + offer_text)
 │   ├── candidate.py       ← candidates (cv_text, cv_sha256, passed_ko, profile_json)
 │   ├── evaluation.py      ← evaluations + dimension_scores
-│   └── ops.py             ← prompt_versions, ai_call_logs, questions,
-│                             chat_sessions, messages, candidate_invitations
+│   ├── ops.py             ← prompt_versions, ai_call_logs, questions,
+│   │                         chat_sessions, messages, candidate_invitations
+│   └── user.py            ← users (recruiters only; candidates are never users)
 ├── services/
 │   ├── profile.py              ← ProfileBuilder — keyword KO screening, zero AI
 │   ├── ko_checker.py           ← KOChecker — first failing KO short-circuits
@@ -248,6 +274,7 @@ nova-hiring/
 │   ├── interview_conductor.py  ← Interview orchestrator: v2 state machine + AI eval pipeline
 │   ├── cv_evaluator.py         ← CV eval: KO check + AI dim scoring + notification trigger
 │   ├── token_manager.py        ← Per-candidate Bearer tokens in Redis (7-day TTL)
+│   ├── auth_service.py         ← bcrypt hashing + recruiter session tokens (12h TTL)
 │   ├── notification_service.py ← Mock email: logs token, saves CandidateInvitation to DB
 │   └── report_writer.py        ← Markdown ranking report generator
 ├── alembic/
@@ -260,13 +287,21 @@ nova-hiring/
 └── tests/
     ├── conftest.py                   ← discovery_fixture (full 8-dim scorecard)
     ├── test_unit.py                  ← 10 tests: Scorer + KOChecker
-    ├── test_interview_unit.py        ← 37 tests: question structure, v1→v2 migration, scorer
+    ├── test_interview_unit.py        ← 28 tests: question structure, v1→v2 migration, scorer
     ├── test_dialogue_manager_unit.py ← 23 tests: DialogueManager, validator, intents
-    └── test_acceptance.py            ← 5 tests requiring seeded DB
+    ├── test_auth_unit.py             ← 7 tests: bcrypt hashing, 72-byte truncation guard
+    └── test_acceptance.py            ← 9 tests requiring seeded DB (1 skips without
+                                         SEED_RECRUITER_PASSWORD)
 ```
 
 ## Key design constraints
 
+- **Recruiters are users; candidates are not.** A recruiter has a row in `users` and logs in with
+  email + password. A candidate never registers — they are invited with a per-candidate token once
+  their CV passes evaluation. Do not add candidates to `users`.
+- **`tenant_id` is stored but not yet enforced.** It exists on `job_openings`, `users` and
+  `ai_call_logs`, and the recruiter's claims carry it, but no query filters by it. Any valid
+  recruiter can read any tenant's data — close this before onboarding a second client.
 - **AI never makes hard decisions.** KO criteria and score calculations are always Python code.
 - **Prompts versioned in the database.** Never hardcode prompts in source files — a prompt change is a behavior change and must be auditable.
 - **Data contracts first.** `DiscoveryJSON` and `CandidateProfile` are defined before any business logic.

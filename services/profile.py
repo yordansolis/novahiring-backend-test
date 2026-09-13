@@ -54,7 +54,14 @@ class ProfileBuilder:
         ko_keywords: dict[str, list[str]] = {
             "KO1": ["whatsapp business api", "whatsapp business", "meta cloud api", "twilio whatsapp"],
             "KO2": ["rgpd", "lopdgdd", "gdpr", "protección de datos", "datos sanitarios", "aepd"],
-            "KO3": ["sin supervisión", "autonomía", "en solitario", "decisiones arquitectónicas"],
+            "KO3": [
+                "sin supervisión", "autonomía", "en solitario", "decisiones arquitectónicas",
+                # Adjective forms: "de forma autónoma" is as common as the noun "autonomía".
+                # Phrase-level on purpose — bare "autónomo" also means freelancer/self-employed
+                # ("empresas y autónomos"), which is not evidence of working unsupervised.
+                "de forma autónoma", "de manera autónoma", "trabajo autónomo",
+                "de forma independiente", "de manera independiente",
+            ],
         }
         keywords = ko_keywords.get(ko.id, [])
         found = any(kw in cv_lower for kw in keywords)
